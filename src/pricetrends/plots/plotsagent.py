@@ -1,5 +1,5 @@
 import os
-from plotstools import get_file_path, combine_file_paths, create_plots
+from plotstools import get_file_path, create_plots
 
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
@@ -23,9 +23,7 @@ class PlotResponse(BaseModel):
     save_paths: List[str] = Field(..., description="List of file paths")
 
 
-tools = [get_file_path, 
-        # combine_file_paths, 
-        create_plots]
+tools = [get_file_path, create_plots]
 
 prompt = ChatPromptTemplate([
     (
@@ -44,13 +42,11 @@ prompt = ChatPromptTemplate([
             3. Use `create_plots` to generate and save the plots.
             4. Return the list of file paths where the plots were saved. Only return this list intact as it is without any changes or additional information.
         """, 
-    ),  # 5. After applying PlotResponse tool only return this list intact as it is without any changes or additional information.
+    ),
     ("human", "{input}"),
     ("placeholder", "{agent_scratchpad}"),
 ])
 
-
-# llm_withtool =  llm.bind_tools([PlotResponse])
 
 # Create the agent
 agent = create_tool_calling_agent(
@@ -71,4 +67,4 @@ agent_executor = AgentExecutor(
 response = agent_executor.invoke({
     "input": "Plot Closing Prices for Nvidia (NVDA) and Exponential Moving Average with span 5 for Tesla (TSLA)"
 })
-print(response) #  and Exponential Moving Average with span 5 for Tesla (TSLA)
+print(response)

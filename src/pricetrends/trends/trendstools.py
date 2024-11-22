@@ -22,7 +22,7 @@ def refresh_stock_data(ticker: str) -> str:
     """
     global stock_data, root_dir
 
-    ticker_stock = yf.download(ticker, period="1mo")  # 6 months of data
+    ticker_stock = yf.download(ticker, period="6mo")  # 6 months of data
     if ticker_stock.empty:
         raise ValueError(f"No data found for ticker: {ticker}")
     
@@ -68,6 +68,7 @@ def get_closing_price(ticker: str) -> str:
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
+        closing_price.columns = ['Values']
         save_path = f"{ticker.upper()}_closing_price.csv"
         closing_price.to_csv(save_path)
 
@@ -97,6 +98,7 @@ def get_moving_average(ticker: str, window: int) -> str:
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
+        moving_average.columns = ['Values']
         save_path = os.path.join(root_dir, f"{ticker.upper()}_moving_average_{window}.csv")
         moving_average.to_csv(save_path)
 
@@ -126,6 +128,7 @@ def get_short_moving_average(ticker: str) -> str:
         window = 10
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
+        moving_average.columns = ['Values']
         save_path = os.path.join(root_dir, f"{ticker.upper()}_short_moving_average.csv")
         moving_average.to_csv(save_path)
 
@@ -155,6 +158,7 @@ def get_long_moving_average(ticker: str) -> str:
         window = 50
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
+        moving_average.columns = ['Values']
         save_path = os.path.join(root_dir, f"{ticker.upper()}_long_moving_average_{window}.csv")
         moving_average.to_csv(save_path)
 
@@ -185,6 +189,7 @@ def get_exponential_moving_average(ticker: str, span: int) -> str:
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         exponential_moving_average = closing_price.ewm(span=span, adjust=False).mean()
+        exponential_moving_average.columns = ['Values']
         save_path = os.path.join(root_dir, f"{ticker.upper()}_exponential_moving_average.csv")
         exponential_moving_average.to_csv(save_path)
 

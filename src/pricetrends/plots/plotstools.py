@@ -30,19 +30,6 @@ def get_file_path(ticker: str, trend: str, window: int = None) -> str:
 
     return file_path
 
-@tool
-def combine_file_paths(**file_paths) -> list:
-    """
-    Combines multiple file paths into a list.
-
-    Args:
-        *file_paths: Variable number of file path strings each received from get_file_path tool.
-
-    Returns:
-        list: A list of file paths.
-    """
-    print("In Combine File Paths ", type(file_paths), file_paths)
-    return list(file_paths)
 
 @tool
 def create_plots(file_paths: list) -> list[str]:
@@ -60,4 +47,4 @@ def create_plots(file_paths: list) -> list[str]:
         print("In Create Plots ", type(file_paths), file_paths)
         return file_paths
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Plot Creation Error : {e}")
