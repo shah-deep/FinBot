@@ -1,4 +1,5 @@
 import requests
+import time
 import pandas as pd
 from langchain.tools import tool
 from typing import Dict, Any, Annotated
@@ -26,21 +27,22 @@ def fetch_company_data() -> pd.DataFrame:
     return company_data
 
 
-# Global variable to store company data
-company_data = fetch_company_data()
+# Global variables to store company data
+company_cik_data = fetch_company_data()
+company_facts_data = {}
 
 
 @tool
-def refresh_company_data() -> str:
+def refresh_company_cik_data() -> str:
     """
     Refreshes the global company data from the SEC API.
 
     Returns:
         str: A success message confirming the update.
     """
-    global company_data
-    company_data = fetch_company_data()
-    return "Company data refreshed successfully."
+    global company_cik_data
+    company_cik_data = fetch_company_data()
+    return "Company cik data refreshed successfully."
 
 
 @tool
@@ -54,14 +56,14 @@ def get_cik_from_ticker(ticker: str) -> str:
     Returns:
         str: The CIK value associated with the ticker.
     """
-    if ticker not in company_data.index:
+    if ticker not in company_cik_data.index:
         raise ValueError(f"Ticker '{ticker}' not found.")
-    return company_data.loc[ticker]['cik_str']
+    return company_cik_data.loc[ticker]['cik_str']
 
 
 
 @tool
-def get_company_facts_data(cik: str) -> dict:
+def refresh_company_facts_data(cik: str) -> str:
     """
     Retrieves company facts data from the SEC using the given CIK.
 
@@ -69,31 +71,57 @@ def get_company_facts_data(cik: str) -> dict:
         cik (str): The CIK value of the company.
 
     Returns:
-        dict: A dictionary containing the company facts data.
+        str: A success message confirming the update.
     """
+    global company_facts_data, headers
     response = requests.get(
         f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json',
-        headers={"User-Agent": "YourAppName"}
+        headers=headers
     )
     if response.status_code != 200:
         raise ValueError(f"Failed to fetch data for CIK {cik}.")
-    return response.json()
+    company_facts_data[cik] = {}
+    company_facts_data[cik]['data'] = response.json()
+    company_facts_data[cik]['timestamp'] = time.time()
+    return "Company facts data refreshed successfully."
 
 
 @tool
-def calculate_roe(company_facts: dict) -> float:
+def check_company_facts_data(cik: str) -> bool:
     """
-    Computes the return on equity (ROE) from SEC company facts data.
+    Check if Company Facts Data is Available.
 
     Args:
-        company_facts (dict): The company facts data retrieved from the SEC.
+        cik (str): The CIK value of the company.
+
+    Returns:
+        bool: True if available, False if not available
+    """
+    global company_facts_data
+
+    if (cik in company_facts_data) and ((company_facts_data[cik]["timestamp"] - time.time()) < 86400):
+        return True
+
+    return False 
+
+
+@tool
+def calculate_roe(cik: str) -> float:
+    """
+    Computes the return on equity (ROE) from SEC company facts data.
+    It has global access to Company Facts Data.
+
+    Args:
+        cik (str): The CIK value of the company.
 
     Returns:
         float: The calculated ROE, or 0 if data is insufficient.
     """
+    global company_facts_data
+    
     try:
-        net_income_data = company_facts['facts']['us-gaap']['NetIncomeLoss']['units']['USD']
-        equity_data = company_facts['facts']['us-gaap']['StockholdersEquity']['units']['USD']
+        net_income_data = company_facts_data[cik]['data']['facts']['us-gaap']['NetIncomeLoss']['units']['USD']
+        equity_data = company_facts_data[cik]['data']['facts']['us-gaap']['StockholdersEquity']['units']['USD']
 
         def get_latest_data(form_type: str):
             """
@@ -106,7 +134,7 @@ def calculate_roe(company_facts: dict) -> float:
                 tuple: Net income and equity values if found; otherwise, (0, 0).
             """
             accn = None
-            net_income = equity = 0
+            net_income, equity = 0, 0
 
             for report in reversed(net_income_data):
                 if report['form'] == form_type:
@@ -127,6 +155,7 @@ def calculate_roe(company_facts: dict) -> float:
         if not (net_income and equity):
             net_income, equity = get_latest_data('10-Q')
 
+        
         if net_income and equity:
             return net_income / equity
         
