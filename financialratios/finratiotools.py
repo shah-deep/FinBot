@@ -2,9 +2,13 @@ import requests
 import time
 import pandas as pd
 from langchain.tools import tool
-from typing import Dict, Any, Annotated
+# from typing import Dict, Any, Annotated
 
 headers = {'User-Agent': "dshah@sd5.me"}
+company_facts_data = {}
+cik_last_fetch_time = 0
+company_cik_data = None
+
 
 def fetch_company_data() -> pd.DataFrame:
     """
@@ -27,17 +31,12 @@ def fetch_company_data() -> pd.DataFrame:
     return company_data
 
 
-# Global variables to store company data
-cik_last_fetch_time = time.time()
-company_cik_data = fetch_company_data()
-company_facts_data = {}
-
-
 def refresh_company_cik_data():
     """
     Refreshes the global company data from the SEC API.
     """
-    global company_cik_data
+    global company_cik_data, cik_last_fetch_time
+    cik_last_fetch_time = time.time()
     company_cik_data = fetch_company_data()
 
 
@@ -52,10 +51,9 @@ def get_cik_from_ticker(ticker: str) -> str:
     Returns:
         str: The CIK value associated with the ticker.
     """
-    # global cik_last_fetch_time
-    # if ((time.time()-cik_last_fetch_time) > 86400):
-    #     cik_last_fetch_time = time.time()
-    #     refresh_company_cik_data()
+    global cik_last_fetch_time
+    if ((time.time()-cik_last_fetch_time) > 86400):
+        refresh_company_cik_data()
 
     if ticker not in company_cik_data.index:
         raise ValueError(f"Ticker '{ticker}' not found.")
