@@ -190,7 +190,7 @@ def get_exponential_moving_average(ticker: str, span: int) -> str:
         closing_price = stock_data[ticker]["data"]['Close']
         exponential_moving_average = closing_price.ewm(span=span, adjust=False).mean()
         exponential_moving_average.columns = ['Values']
-        save_path = os.path.join(root_dir, f"{ticker.upper()}_exponential_moving_average.csv")
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_exponential_moving_average_{span}.csv")
         exponential_moving_average.to_csv(save_path)
 
         return f"Got Exponential Moving Average with span {span} for {ticker}"
