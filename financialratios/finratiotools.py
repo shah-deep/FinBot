@@ -5,7 +5,6 @@ from langchain.tools import tool
 from typing import Dict, Any, Annotated
 
 headers = {'User-Agent': "dshah@sd5.me"}
-cik_last_fetch_time = time.time()
 
 def fetch_company_data() -> pd.DataFrame:
     """
@@ -29,6 +28,7 @@ def fetch_company_data() -> pd.DataFrame:
 
 
 # Global variables to store company data
+cik_last_fetch_time = time.time()
 company_cik_data = fetch_company_data()
 company_facts_data = {}
 
@@ -52,10 +52,10 @@ def get_cik_from_ticker(ticker: str) -> str:
     Returns:
         str: The CIK value associated with the ticker.
     """
-    global cik_last_fetch_time
-    if ((time.time()-cik_last_fetch_time) > 86400):
-        cik_last_fetch_time = time.time()
-        refresh_company_cik_data()
+    # global cik_last_fetch_time
+    # if ((time.time()-cik_last_fetch_time) > 86400):
+    #     cik_last_fetch_time = time.time()
+    #     refresh_company_cik_data()
 
     if ticker not in company_cik_data.index:
         raise ValueError(f"Ticker '{ticker}' not found.")

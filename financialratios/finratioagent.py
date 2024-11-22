@@ -4,7 +4,6 @@ from finratiotools import (get_cik_from_ticker, check_company_facts_data, refres
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
 from langchain.prompts import ChatPromptTemplate
-from typing import Dict, Any, Annotated, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
