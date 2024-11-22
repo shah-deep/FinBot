@@ -44,7 +44,7 @@ def check_stock_data(ticker: str) -> bool:
         ticker (str): The ticker symbol of the company.
 
     Returns:
-        bool: True if available, False if not available
+        bool: True if available, False if not available.
     """
     global stock_data, root_dir
 
@@ -62,10 +62,13 @@ def get_closing_price(ticker: str) -> str:
     Args:
         ticker (str): The stock ticker symbol for which to get the closing prices.
 
+    Returns:
+        str: A success message confirming the update.
+
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
-        save_path = f"{ticker}_closing_price.csv"
+        save_path = f"{ticker.upper()}_closing_price.csv"
         closing_price.to_csv(save_path)
 
         return f"Got Closing Prices for {ticker}"
@@ -87,11 +90,14 @@ def get_moving_average(ticker: str, window: int) -> str:
         ticker (str): The stock ticker symbol for which to calculate the moving average.
         window (int): The size of the rolling window to compute the moving average.
 
+    Returns:
+        str: A success message confirming the update.
+
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
-        save_path = os.path.join(root_dir, f"{ticker}_moving_average_{window}.csv")
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_moving_average_{window}.csv")
         moving_average.to_csv(save_path)
 
         return f"Got Moving Average with window {window} for {ticker}"
@@ -112,12 +118,15 @@ def get_short_moving_average(ticker: str) -> str:
     Args:
         ticker (str): The stock ticker symbol for which to calculate the moving average.
 
+    Returns:
+        str: A success message confirming the update.
+
     """
     try:
         window = 10
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
-        save_path = os.path.join(root_dir, f"{ticker}_short_moving_average.csv")
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_short_moving_average.csv")
         moving_average.to_csv(save_path)
 
         return f"Got Short Moving Average for {ticker}"
@@ -138,12 +147,15 @@ def get_long_moving_average(ticker: str) -> str:
     Args:
         ticker (str): The stock ticker symbol for which to calculate the long moving average.
 
+    Returns:
+        str: A success message confirming the update.
+
     """
     try:
         window = 50
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
-        save_path = os.path.join(root_dir, f"{ticker}_long_moving_average_{window}.csv")
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_long_moving_average_{window}.csv")
         moving_average.to_csv(save_path)
 
         return f"Got Long Moving Average for {ticker}"
@@ -165,12 +177,15 @@ def get_exponential_moving_average(ticker: str, span: int) -> str:
     Args:
         ticker (str): The stock ticker symbol for which to calculate the EMA.
         span (int): The span parameter for the EMA, representing the smoothing factor.
+    
+    Returns:
+        str: A success message confirming the update.
 
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         exponential_moving_average = closing_price.ewm(span=span, adjust=False).mean()
-        save_path = os.path.join(root_dir, f"{ticker}_exponential_moving_average.csv")
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_exponential_moving_average.csv")
         exponential_moving_average.to_csv(save_path)
 
         return f"Got Exponential Moving Average with span {span} for {ticker}"
