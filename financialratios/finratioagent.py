@@ -1,5 +1,6 @@
 import os
-from finratiotools import (refresh_company_cik_data, get_cik_from_ticker, check_company_facts_data, refresh_company_facts_data, calculate_roe)
+from finratiotools import (get_cik_from_ticker, check_company_facts_data, refresh_company_facts_data, 
+                           calculate_roe, calculate_roa, calculate_net_profit_margin, calculate_gross_margin, calculate_debt_equity, calculate_interest_coverage)
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
 from langchain.prompts import ChatPromptTemplate
@@ -17,11 +18,15 @@ llm = ChatCohere(
 
 # Create the list of tools
 tools = [
-    # refresh_company_data,
     get_cik_from_ticker,
     refresh_company_facts_data,
     check_company_facts_data,
-    calculate_roe
+    calculate_roe, 
+    calculate_roa, 
+    calculate_net_profit_margin, 
+    calculate_gross_margin, 
+    calculate_debt_equity, 
+    calculate_interest_coverage
 ]
 
 
@@ -32,7 +37,7 @@ prompt = ChatPromptTemplate.from_messages(
             """
                 You are a financial analysis assistant with access to SEC company data. 
                 
-                Use calculate_roe tool to compute ROE after getting company facts data.
+                Use tool with name starting from calculate_ to compute value after checking company facts data.
 
                 When answering:
                 1. Get CIK from ticker using get_cik_from_ticker tool.
@@ -66,7 +71,12 @@ agent_executor = AgentExecutor(
 
 
 
+# response = agent_executor.invoke({
+#     "input": "What is the ROE for Nvidia (NVDA) and Apple (AAPL)?"
+# })
+# print(response)
+
 response = agent_executor.invoke({
-    "input": "What is the ROE for Nvidia (NVDA) and Apple (AAPL)?"
+    "input": "What is the Net Profit Margin, Gross Margin, and Interest Coverage for Nvidia (NVDA) and Apple (AAPL)?"
 })
 print(response)
