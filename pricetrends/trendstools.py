@@ -1,13 +1,13 @@
 import requests
-import time
 import json
 import pandas as pd
+import time, os
 import yfinance as yf
 from langchain.tools import tool
 
 
-
 stock_data = {}  
+root_dir = ''
 
 @tool
 def refresh_stock_data(ticker: str) -> str:
@@ -20,7 +20,7 @@ def refresh_stock_data(ticker: str) -> str:
     Returns:
         str: A success message confirming the update.
     """
-    global stock_data
+    global stock_data, root_dir
 
     ticker_stock = yf.download(ticker, period="1mo")  # 6 months of data
     if ticker_stock.empty:
@@ -46,7 +46,7 @@ def check_stock_data(ticker: str) -> bool:
     Returns:
         bool: True if available, False if not available
     """
-    global stock_data
+    global stock_data, root_dir
 
     if (ticker in stock_data) and ((stock_data[ticker]["last_update_time"] - time.time()) < 86400):
         return True
@@ -55,42 +55,30 @@ def check_stock_data(ticker: str) -> bool:
 
 
 @tool
-def get_closing_price(ticker: str) -> dict:
+def get_closing_price(ticker: str) -> str:
     """
-    Retrieve a stock's closing prices.
+    Retrieves a stock's closing prices and saves them to the server.
 
     Args:
         ticker (str): The stock ticker symbol for which to get the closing prices.
 
-    Returns:
-        dict: A dictionary containing:
-            - "ticker" (str): The stock ticker symbol.
-            - "info" (str): A string describing the calculation.
-            - "data" (dict): A dictionary mapping timestamps to their corresponding closing price.
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
-        original_dict = closing_price.to_dict()
-        ticker, data = list(original_dict.items())[0] 
-        transformed_dict = {
-            "ticker": ticker,
-            "info": "Closing Price",
-            "data": data
-        }
-        print("Git Dict")
-        return transformed_dict
+        save_path = f"{ticker}_closing_price.csv"
+        closing_price.to_csv(save_path)
+
+        return f"Got Closing Prices for {ticker}"
 
     except KeyError as e:
         raise ValueError(f"Missing stock price data: {e}")
-    finally:
-        print("Return done")
         
 
 
 @tool
-def get_moving_average(ticker: str, window: int) -> dict:
+def get_moving_average(ticker: str, window: int) -> str:
     """
-    Calculate the moving average of a stock's closing prices over a specified window.
+    Calculate the moving average of a stock's closing prices over a specified window and saves them to the server.
 
     This tool fetches historical stock closing prices and computes a moving average 
     for the specified rolling window size.
@@ -99,33 +87,23 @@ def get_moving_average(ticker: str, window: int) -> dict:
         ticker (str): The stock ticker symbol for which to calculate the moving average.
         window (int): The size of the rolling window to compute the moving average.
 
-    Returns:
-        dict: A dictionary containing:
-            - "ticker" (str): The stock ticker symbol.
-            - "info" (str): A string describing the calculation.
-            - "data" (dict): A dictionary mapping timestamps to their corresponding moving average values.
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
-        original_dict = moving_average.to_dict()
-        ticker, data = list(original_dict.items())[0] 
-        transformed_dict = {
-            "ticker": ticker,
-            "info": f"Moving Average (window={window})",
-            "data": data
-        }
-        
-        return transformed_dict
+        save_path = os.path.join(root_dir, f"{ticker}_moving_average_{window}.csv")
+        moving_average.to_csv(save_path)
+
+        return f"Got Moving Average with window {window} for {ticker}"
 
     except KeyError as e:
         raise ValueError(f"Missing stock price data: {e}")
 
 
 @tool
-def get_short_moving_average(ticker: str) -> dict:
+def get_short_moving_average(ticker: str) -> str:
     """
-    Calculate the short moving average of a stock's closing prices over a short window.
+    Calculate the short moving average (SMA) of a stock's closing prices over a short window and saves them to the server.
 
     This tool is specialized to compute a moving average over a predefined short window of 10 periods. 
     It is useful for identifying short-term trends in the stock's performance.
@@ -134,34 +112,25 @@ def get_short_moving_average(ticker: str) -> dict:
     Args:
         ticker (str): The stock ticker symbol for which to calculate the moving average.
 
-    Returns:
-        dict: A dictionary containing:
-            - "ticker" (str): The stock ticker symbol.
-            - "info" (str): A description of the short moving average calculation.
-            - "data" (dict): A dictionary mapping timestamps to their corresponding short moving average values.
     """
     try:
         window = 10
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
-        original_dict = moving_average.to_dict()
-        ticker, data = list(original_dict.items())[0] 
-        transformed_dict = {
-            "ticker": ticker,
-            "info": f"Short Moving Average",
-            "data": data
-        }
-        
-        return transformed_dict
+        save_path = os.path.join(root_dir, f"{ticker}_short_moving_average.csv")
+        moving_average.to_csv(save_path)
+
+        return f"Got Short Moving Average for {ticker}"
+
 
     except KeyError as e:
         raise ValueError(f"Missing stock price data: {e}") 
     
 
 @tool
-def get_long_moving_average(ticker: str) -> dict:
+def get_long_moving_average(ticker: str) -> str:
     """
-    Calculate the long moving average of a stock's closing prices over a fixed long window.
+    Calculate the long moving average (LMA) of a stock's closing prices over a fixed long window and saves them to the server.
 
     This tool computes the moving average over a predefined long window of 50 periods, 
     which is useful for identifying long-term trends in stock performance.
@@ -169,34 +138,25 @@ def get_long_moving_average(ticker: str) -> dict:
     Args:
         ticker (str): The stock ticker symbol for which to calculate the long moving average.
 
-    Returns:
-        dict: A dictionary containing:
-            - "ticker" (str): The stock ticker symbol.
-            - "info" (str): A description of the long moving average calculation.
-            - "data" (dict): A mapping of timestamps to their corresponding long moving average values.
     """
     try:
         window = 50
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
-        original_dict = moving_average.to_dict()
-        ticker, data = list(original_dict.items())[0] 
-        transformed_dict = {
-            "ticker": ticker,
-            "info": "Long Moving Average",
-            "data": data
-        }
-        
-        return transformed_dict
+        save_path = os.path.join(root_dir, f"{ticker}_long_moving_average_{window}.csv")
+        moving_average.to_csv(save_path)
+
+        return f"Got Long Moving Average for {ticker}"
+
 
     except KeyError as e:
         raise ValueError(f"Missing stock price data: {e}")
 
 
 @tool
-def get_exponential_moving_average(ticker: str, span: int) -> dict:
+def get_exponential_moving_average(ticker: str, span: int) -> str:
     """
-    Calculate the exponential moving average (EMA) of a stock's closing prices.
+    Calculate the exponential moving average (EMA) of a stock's closing prices and saves them to the server.
 
     This tool computes the exponential moving average, which gives more weight 
     to recent data points, making it more responsive to recent price changes. 
@@ -206,24 +166,15 @@ def get_exponential_moving_average(ticker: str, span: int) -> dict:
         ticker (str): The stock ticker symbol for which to calculate the EMA.
         span (int): The span parameter for the EMA, representing the smoothing factor.
 
-    Returns:
-        dict: A dictionary containing:
-            - "ticker" (str): The stock ticker symbol.
-            - "info" (str): A description of the EMA calculation.
-            - "data" (dict): A mapping of timestamps to their corresponding EMA values.
     """
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         exponential_moving_average = closing_price.ewm(span=span, adjust=False).mean()
-        original_dict = exponential_moving_average.to_dict()
-        ticker, data = list(original_dict.items())[0] 
-        transformed_dict = {
-            "ticker": ticker,
-            "info": f"Exponential Moving Average (span={span})",
-            "data": data
-        }
-        
-        return transformed_dict
+        save_path = os.path.join(root_dir, f"{ticker}_exponential_moving_average.csv")
+        exponential_moving_average.to_csv(save_path)
+
+        return f"Got Exponential Moving Average with span {span} for {ticker}"
+
 
     except KeyError as e:
         raise ValueError(f"Missing stock price data: {e}")

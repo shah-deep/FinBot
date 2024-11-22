@@ -29,28 +29,25 @@ tools = [
 ]
 
 
-prompt = ChatPromptTemplate.from_messages(
-    [
-        (
-            "system",
-            """
-                You are a financial analysis assistant with access to SEC company data. 
-                
-                Use tool with name starting from calculate_ to compute value after checking company facts data.
+prompt = ChatPromptTemplate([
+    (
+        "system",
+        """
+            You are a financial analysis assistant with access to SEC company data. 
+            
+            Use tool with name starting from calculate_ to compute value after checking company facts data.
 
-                When answering:
-                1. Get CIK from ticker using get_cik_from_ticker tool.
-                2. Using CIK, check if company facts data is available with check_company_facts_data tool.
-                3. If it returns False, use refresh_company_facts_data to fetch company facts data.
-                3. Select appropriate tool for performing calculations.
-                4. Return the results as requested in the question.
-            """,
-        ),
-        # ("placeholder", "{history}"),
-        ("human", "{input}"),
-        ("placeholder", "{agent_scratchpad}"),
-    ]
-)
+            When answering:
+            1. Get CIK from ticker using get_cik_from_ticker tool.
+            2. Using CIK, check if company facts data is available with check_company_facts_data tool.
+            3. If it returns False, use refresh_company_facts_data to fetch company facts data.
+            3. Select appropriate tool for performing calculations.
+            4. Return the results as requested in the question.
+        """,
+    ),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}"),
+])
 
 
 # Create the agent
