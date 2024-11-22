@@ -55,7 +55,7 @@ def check_stock_data(ticker: str) -> bool:
 
 
 @tool
-def get_closing_price(ticker: str) -> str:
+def get_closing_price(ticker: str) -> dict:
     """
     Retrieve a stock's closing prices.
 
@@ -63,7 +63,7 @@ def get_closing_price(ticker: str) -> str:
         ticker (str): The stock ticker symbol for which to get the closing prices.
 
     Returns:
-        str: A JSON string containing:
+        dict: A dictionary containing:
             - "ticker" (str): The stock ticker symbol.
             - "info" (str): A string describing the calculation.
             - "data" (dict): A dictionary mapping timestamps to their corresponding closing price.
@@ -78,8 +78,6 @@ def get_closing_price(ticker: str) -> str:
             "data": data
         }
         print("Git Dict")
-        transformed_dict = json.dumps(transformed_dict, separators=(',', ':'))
-
         return transformed_dict
 
     except KeyError as e:
@@ -90,7 +88,7 @@ def get_closing_price(ticker: str) -> str:
 
 
 @tool
-def get_moving_average(ticker: str, window: int) -> str:
+def get_moving_average(ticker: str, window: int) -> dict:
     """
     Calculate the moving average of a stock's closing prices over a specified window.
 
@@ -102,7 +100,7 @@ def get_moving_average(ticker: str, window: int) -> str:
         window (int): The size of the rolling window to compute the moving average.
 
     Returns:
-        str: A JSON string containing:
+        dict: A dictionary containing:
             - "ticker" (str): The stock ticker symbol.
             - "info" (str): A string describing the calculation.
             - "data" (dict): A dictionary mapping timestamps to their corresponding moving average values.
@@ -117,7 +115,6 @@ def get_moving_average(ticker: str, window: int) -> str:
             "info": f"Moving Average (window={window})",
             "data": data
         }
-        transformed_dict = json.dumps(transformed_dict, separators=(',', ':'))
         
         return transformed_dict
 
@@ -126,7 +123,7 @@ def get_moving_average(ticker: str, window: int) -> str:
 
 
 @tool
-def get_short_moving_average(ticker: str) -> str:
+def get_short_moving_average(ticker: str) -> dict:
     """
     Calculate the short moving average of a stock's closing prices over a short window.
 
@@ -138,7 +135,7 @@ def get_short_moving_average(ticker: str) -> str:
         ticker (str): The stock ticker symbol for which to calculate the moving average.
 
     Returns:
-        str: A JSON string containing:
+        dict: A dictionary containing:
             - "ticker" (str): The stock ticker symbol.
             - "info" (str): A description of the short moving average calculation.
             - "data" (dict): A dictionary mapping timestamps to their corresponding short moving average values.
@@ -154,7 +151,6 @@ def get_short_moving_average(ticker: str) -> str:
             "info": f"Short Moving Average",
             "data": data
         }
-        transformed_dict = json.dumps(transformed_dict, separators=(',', ':'))
         
         return transformed_dict
 
@@ -163,7 +159,7 @@ def get_short_moving_average(ticker: str) -> str:
     
 
 @tool
-def get_long_moving_average(ticker: str) -> str:
+def get_long_moving_average(ticker: str) -> dict:
     """
     Calculate the long moving average of a stock's closing prices over a fixed long window.
 
@@ -174,7 +170,7 @@ def get_long_moving_average(ticker: str) -> str:
         ticker (str): The stock ticker symbol for which to calculate the long moving average.
 
     Returns:
-        str: A JSON string containing:
+        dict: A dictionary containing:
             - "ticker" (str): The stock ticker symbol.
             - "info" (str): A description of the long moving average calculation.
             - "data" (dict): A mapping of timestamps to their corresponding long moving average values.
@@ -190,7 +186,6 @@ def get_long_moving_average(ticker: str) -> str:
             "info": "Long Moving Average",
             "data": data
         }
-        transformed_dict = json.dumps(transformed_dict, separators=(',', ':'))
         
         return transformed_dict
 
@@ -199,7 +194,7 @@ def get_long_moving_average(ticker: str) -> str:
 
 
 @tool
-def get_exponential_moving_average(ticker: str, span: int) -> str:
+def get_exponential_moving_average(ticker: str, span: int) -> dict:
     """
     Calculate the exponential moving average (EMA) of a stock's closing prices.
 
@@ -212,7 +207,7 @@ def get_exponential_moving_average(ticker: str, span: int) -> str:
         span (int): The span parameter for the EMA, representing the smoothing factor.
 
     Returns:
-        str: A JSON string containing:
+        dict: A dictionary containing:
             - "ticker" (str): The stock ticker symbol.
             - "info" (str): A description of the EMA calculation.
             - "data" (dict): A mapping of timestamps to their corresponding EMA values.
@@ -227,7 +222,6 @@ def get_exponential_moving_average(ticker: str, span: int) -> str:
             "info": f"Exponential Moving Average (span={span})",
             "data": data
         }
-        transformed_dict = json.dumps(transformed_dict, separators=(',', ':'))
         
         return transformed_dict
 
