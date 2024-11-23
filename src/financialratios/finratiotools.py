@@ -128,7 +128,7 @@ def get_latest_data(numerator, denominator, form_type):
 @tool
 def calculate_roe(cik: str) -> float:
     """
-    Computes the return on equity (ROE) from SEC company facts data.
+    Computes the return on equity (ROE) from SEC company facts data. This is a Profitability Metrics. 
     It has global access to Company Facts Data.
 
     Args:
@@ -161,7 +161,7 @@ def calculate_roe(cik: str) -> float:
 @tool
 def calculate_roa(cik: str) -> float:
     """
-    Computes the Return on Assets (ROA) from SEC company facts data.
+    Computes the Return on Assets (ROA) from SEC company facts data. This is a Profitability Metrics. 
     It has global access to Company Facts Data.
 
     Args:
@@ -194,7 +194,7 @@ def calculate_roa(cik: str) -> float:
 @tool
 def calculate_net_profit_margin(cik: str) -> float:
     """
-    Computes the Net Profit Margin from SEC company facts data.
+    Computes the Net Profit Margin from SEC company facts data. This is a Profitability Metrics. 
     It has global access to Company Facts Data.
 
     Args:
@@ -227,7 +227,7 @@ def calculate_net_profit_margin(cik: str) -> float:
 @tool
 def calculate_gross_margin(cik: str) -> float:
     """
-    Computes the Gross Margin from SEC company facts data.
+    Computes the Gross Margin from SEC company facts data. This is a Profitability Metrics. 
     It has global access to Company Facts Data.
 
     Args:
@@ -260,7 +260,7 @@ def calculate_gross_margin(cik: str) -> float:
 @tool
 def calculate_debt_equity(cik: str) -> float:
     """
-    Computes the Debt to Equity from SEC company facts data.
+    Computes the Debt to Equity from SEC company facts data. This is a Leverage/Financial Stability Metrics. 
     It has global access to Company Facts Data.
 
     Args:
@@ -293,7 +293,7 @@ def calculate_debt_equity(cik: str) -> float:
 @tool
 def calculate_interest_coverage(cik: str) -> float:
     """
-    Computes the Interest Coverage from SEC company facts data.
+    Computes the Interest Coverage from SEC company facts data. This is a Leverage/Financial Stability Metrics. 
     It has global access to Company Facts Data.
 
     Args:
