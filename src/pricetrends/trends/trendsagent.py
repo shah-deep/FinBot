@@ -39,7 +39,8 @@ def create_trends_agent(verbose=False):
                 1. Check if company stock data is available for given ticker with check_stock_data tool.
                 2. If it returns False, use refresh_stock_data tool to fetch company stock data.
                 3. Select appropriate tool for getting specific trend data by passing company ticker.
-                4. Return success message when all requested trends are fetched.
+                4. When all requested trends are fetched, return message telling to 
+                generate plot for given trends and tickers. This message will be used by another agent.
             """,
         ),
         ("human", "{input}"),
