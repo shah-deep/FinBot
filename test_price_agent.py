@@ -6,11 +6,11 @@ user_input = "Plot Closing Prices for Nvidia (NVDA)"
 
 events = graph.stream(
     {
-        "messages": [
+        "messages": 
             HumanMessage(
                 content=user_input
             )
-        ],
+        ,
     },
     # Maximum number of steps to take in the graph
     {"recursion_limit": 150},
