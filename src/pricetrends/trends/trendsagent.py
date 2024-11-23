@@ -1,5 +1,5 @@
 import os
-from trendstools import (refresh_stock_data, check_stock_data, 
+from .trendstools import (refresh_stock_data, check_stock_data, 
                         get_closing_price, get_moving_average, get_exponential_moving_average, get_short_moving_average, get_long_moving_average)
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
@@ -10,7 +10,7 @@ from typing import Dict
 
 load_dotenv()
 
-def create_trends_agent(verbose=True):
+def create_trends_agent(verbose=False):
     cohere_api_key=os.getenv("COHERE_API_KEY")
     # Initialize Cohere LLM
     llm = ChatCohere(temperature=0)

@@ -1,5 +1,5 @@
 import os
-from plotstools import get_file_path, create_plots
+from .plotstools import get_file_path, create_plots
 
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def create_plots_agent(verbose=True):
+def create_plots_agent(verbose=False):
     cohere_api_key=os.getenv("COHERE_API_KEY")
 
     # Initialize Cohere LLM
