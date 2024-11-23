@@ -73,7 +73,7 @@ class Router(TypedDict):
     next: Literal["FINISH", "trends_saver", "plots_maker"]
     prompt: str
 
-llm = ChatCohere(temperature=0)
+llm = ChatCohere(model="command-r-plus")
 
 def supervisor_node(state: State) -> State:
     messages = [
@@ -92,7 +92,26 @@ def supervisor_node(state: State) -> State:
             }      
         ]}
     
+    
+def graph_builder():
+    builder = StateGraph(State)
+    builder.add_edge(START, "supervisor")
+    builder.add_node("supervisor", supervisor_node)
+    builder.add_node("trends_saver", trends_node)
+    builder.add_node("plots_maker", plots_node)
 
-graph_builder = StateGraph(State)
+    # Agents will always respond to the supervisor
+    builder.add_edge("trends_saver", "supervisor")
+    builder.add_edge("plots_maker", "supervisor")
+
+    # builder.add_edge("supervisor", END)
+
+    builder.add_conditional_edges("supervisor", lambda state: state["next"])
+
+    graph = builder.compile()
+
+    return graph
+
+
 
 
