@@ -81,15 +81,18 @@ system_prompt = (
     f"""
     You are a supervisor tasked with managing a conversation between the following {agent_name_var}s: ratios_agent and techplot_agent.
 
+    Check if both are true: a company's ticker is provided in the user input and the request is related to financial metrics or trends analysis. If not, respond with "finish". 
+
     Your responsibility is to decide which {agent_name_var} should act next, based on the user's request and the current state of the task.  
     Each {agent_name_var} will perform a task and provide results along with a status update.  
 
     Available {agent_name_var}s and their capabilities:
     - ratios_agent: {agent_utilities['ratios_agent']}
     - techplot_agent: {agent_utilities['techplot_agent']}
+    - finish: If none of the previous {agent_name_var}s can do this task or if company's ticker is not give.
 
     Respond with one of the following options:
-    "ratios_agent" | "techplot_agent"
+    "ratios_agent" | "techplot_agent" | "finish"
     """
 )
 
@@ -109,11 +112,14 @@ def supervisor_node(state: State) -> State:
         print(f"Got Next: {next_}")
 
     # print("Response:  ", response)    
-    if(next_ not in ["ratios_agent", "techplot_agent"]):
+    if(next_ not in ["ratios_agent", "techplot_agent", "finish"]):
         print(f"ERROR: WRONG OUTPUT FROM SUPERVISOR -- {response}")
 
-
-    content_ = get_message_content(state)
+    if(next_=="finish"):
+        next_ = END
+        content_ = "MissingInfo"
+    else:
+        content_ = get_message_content(state)
 
     return {"messages": [
             {
@@ -158,17 +164,35 @@ class HelperAgent:
         self.graph = graph
 
     def send_message(self, user_input: str):
-        response = self.graph.invoke({"messages": [HumanMessage(content=user_input)],})
-        if (isinstance(response, dict) and ("messages" in response)):
-            last_message = response["messages"][-1]
-            if(isinstance(last_message, BaseMessage)):
+        try:
+            response = self.graph.invoke({"messages": [HumanMessage(content=user_input)],})
+            if (isinstance(response, dict) and ("messages" in response)):
+                last_message = response["messages"][-1]
+                if(isinstance(last_message, BaseMessage)):
+                    output = {
+                        "sender": last_message.additional_kwargs["sender"],
+                        "response": last_message.content
+                    }
+                    return output
+                
+            if(isinstance(response, BaseMessage)):
                 output = {
-                    "sender": last_message.additional_kwargs["sender"],
-                    "response": last_message.content
+                    "sender": response.additional_kwargs["sender"],
+                    "response": response.content
                 }
                 return output
             
-        return f"Error with the agents. Got response: {response} |"
+            raise ValueError(f"Incorrect format for agent response. Got response: {response}")
+        
+        except Exception as e:
+            print(f"Error in processing: {e}")
+            output = {
+                "sender": "system",
+                "response": "Error"
+            }
+            return output
+            
+            
     
     def get_graph(self):
         return self.graph
