@@ -155,3 +155,29 @@ def supervisor_graph_builder():
 
     return graph
 
+
+class HelperAgent:
+    def __init__(self, graph):
+        self.graph = graph
+
+    def send_message(self, user_input: str):
+        response = self.graph.invoke({"messages": [HumanMessage(content=user_input)],})
+        if (isinstance(response, dict) and ("messages" in response)):
+            last_message = response["messages"][-1]
+            if(isinstance(last_message, BaseMessage)):
+                output = {
+                    "sender": last_message.additional_kwargs["sender"],
+                    "response": last_message.content
+                }
+                return output
+            
+        return f"Error with the agents. Got response: {response} |"
+    
+    def get_graph(self):
+        return self.graph
+
+
+def create_agent():
+    graph = supervisor_graph_builder()
+    agent = HelperAgent(graph)
+    return agent
