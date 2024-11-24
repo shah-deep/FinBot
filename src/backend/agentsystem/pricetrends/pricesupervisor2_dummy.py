@@ -15,8 +15,8 @@ from langchain_cohere import ChatCohere
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 
-trends_agent = create_trends_agent(verbose=True)
-plot_agent = create_plots_agent(verbose=True)
+trends_agent = create_trends_agent()
+plot_agent = create_plots_agent()
 
 
 class State(TypedDict):
@@ -100,7 +100,7 @@ class Router(TypedDict):
     next: Literal["FINISH", "trends_saver", "plots_maker"]
     prompt: str
 
-llm = ChatCohere(model="command-r-plus", verbose=True)
+llm = ChatCohere(model="command-r-plus")
 
 def supervisor_node(state: State) -> State:
     print("STATE Supervisor ", state)

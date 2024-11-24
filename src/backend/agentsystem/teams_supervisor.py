@@ -2,21 +2,18 @@ from .financialratios.finratioagent import create_finratios_agent
 from .pricetrends.pricesupervisor import prices_graph_builder
 
 import json
-from langchain_core.messages import HumanMessage
-from langchain_core.messages import SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.schema import BaseMessage
 from langgraph.graph import StateGraph, START, END
-from langgraph.graph import MessagesState
 from typing import Literal, Annotated
 from typing_extensions import TypedDict
-from langchain.prompts import ChatPromptTemplate
 from langchain_cohere import ChatCohere
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 
 
-ratios_agent = create_finratios_agent(verbose=True)
+ratios_agent = create_finratios_agent(verbose=False)
 techplot_agent = prices_graph_builder()
 
 

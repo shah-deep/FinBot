@@ -6,8 +6,8 @@ from langgraph.graph import StateGraph, START, END
 from typing_extensions import TypedDict
 from langgraph.graph.message import add_messages
 
-trends_agent = create_trends_agent(verbose=True)
-plot_agent = create_plots_agent(verbose=True)
+trends_agent = create_trends_agent(verbose=False)
+plot_agent = create_plots_agent(verbose=False)
 
 
 class State(TypedDict):
