@@ -87,22 +87,14 @@ system_prompt = (
     Your responsibility is to decide which {agent_name_var} should act next, based on the user's request and the current state of the task.  
     Each {agent_name_var} will perform a task and provide results along with a status update.  
 
-    When no further tasks are needed, respond with "finish."
-
     Available {agent_name_var}s and their capabilities:
     - ratios_agent: {agent_utilities['ratios_agent']}
     - techplot_agent: {agent_utilities['techplot_agent']}
 
     Respond with one of the following options:
-    "finish" | "ratios_agent" | "techplot_agent"
+    "ratios_agent" | "techplot_agent"
     """
 )
-
-
-class Router(TypedDict):
-    f"""{agent_name_var} to route to next. If no {agent_name_var}s needed, route to finish."""
-
-    next: Literal["finish", "ratios_agent", "techplot_agent"]
 
 
 llm = ChatCohere(model="command-r-plus")
@@ -120,11 +112,9 @@ def supervisor_node(state: State) -> State:
         print(f"Got Next: {next_}")
 
     # print("Response:  ", response)    
-    if(next_ not in ["finish", "ratios_agent", "techplot_agent"]):
+    if(next_ not in ["ratios_agent", "techplot_agent"]):
         print(f"ERROR: WRONG OUTPUT FROM SUPERVISOR -- {response}")
 
-    if next_ == "finish":
-        next_ = END
 
     content_ = get_message_content(state)
 
@@ -137,34 +127,6 @@ def supervisor_node(state: State) -> State:
             }      
         ]}
 
-def supervisor_node2(state: State) -> State:
-    print("STATE Supervisor ", state)
-
-    messages = [SystemMessage(content=system_prompt)] + state["messages"]
-    response = llm.with_structured_output(Router).invoke(messages) # .with_structured_output(Router)
-    # content_ = state["messages"]
-    next_ = response
-    # if(isinstance(response, BaseMessage)):
-    #     next_ = response.content
-    #     print(f"Got Next: {next_}")
-
-    # print("Response:  ", response)    
-    if(next_ not in ["FINISH", "ratios_agent", "techplot_agent"]):
-        print(f"ERROR: WRONG OUTPUT FROM SUPERVISOR -- {response}")
-
-    if next_ == "FINISH":
-        next_ = END
-
-    content_ = get_message_content(state)
-
-    return {"messages": [
-            {
-                "sender": "supervisor",
-                "next": next_,
-                "content": content_,
-                "role": "assistant", # Use one of 'human', 'user', 'ai', 'assistant', 'function', 'tool', or 'system'
-            }      
-        ]}
 
 def route_tools(state: State):
     last_message = state["messages"][-1]
@@ -184,8 +146,8 @@ def supervisor_graph_builder():
     builder.add_node("techplot_agent", techplot_node)
 
     # Agents will always respond to the supervisor
-    builder.add_edge("ratios_agent", "supervisor")
-    builder.add_edge("techplot_agent", "supervisor")
+    builder.add_edge("ratios_agent", END)
+    builder.add_edge("techplot_agent", END)
 
     builder.add_conditional_edges("supervisor", route_tools)
 

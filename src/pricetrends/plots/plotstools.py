@@ -7,7 +7,7 @@ from langchain.tools import tool
 
 
 @tool
-def get_file_path(ticker: str, trend: str, window: int = None) -> str:
+def get_file_path(ticker: str, trend: str, window: int = 0) -> str:
     """
     Generates a file path for a given ticker, trend, and optional window/span.
 
