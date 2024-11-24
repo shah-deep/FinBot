@@ -38,7 +38,10 @@ def trends_node(state: State) -> State:
 
 def plots_node(state: State) -> State:
     content = get_message_content(state)
-    response = plot_agent.invoke({"input": content})
+    if(content=="Error"):
+        response = "Error"
+    else:
+        response = plot_agent.invoke({"input": content})
 
     return {"messages": 
             {

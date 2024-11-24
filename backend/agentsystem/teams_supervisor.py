@@ -117,7 +117,7 @@ def supervisor_node(state: State) -> State:
 
     if(next_=="finish"):
         next_ = END
-        content_ = "MissingInfo"
+        content_ = "Error"
     else:
         content_ = get_message_content(state)
 
