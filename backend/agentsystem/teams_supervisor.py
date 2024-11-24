@@ -46,7 +46,7 @@ def ratios_node(state: State) -> State:
 def techplot_node(state: State) -> State:
     content = get_message_content(state)
     response = techplot_agent.invoke({"messages": HumanMessage(content=content), })
-    print("Techplot Node Response: ", response, " | type: ", type(response))
+    print("Techplot Node Response: ", response)
     
     if(isinstance(response, dict) and ("messages" in response)):
         output = response["messages"]["content"]
