@@ -1,10 +1,10 @@
+import json
 from dash import html
 import dash_bootstrap_components as dbc
 from dash_extensions import WebSocket
 from dash.dependencies import Input, Output, State
 
-def register_callbacks(app):
-    def textbox(text, box="AI"):
+def textbox(text, box="AI"):
         style = {
             "maxWidth": "60%",
             "width": "max-content",
@@ -24,9 +24,9 @@ def register_callbacks(app):
             return html.Div(textbox)
 
         else:
-            raise ValueError("Incorrect option for `box`.")
-        
+            raise ValueError("Incorrect option for textbox.")
 
+def register_callbacks(app):
     @app.callback(
         Output("display-conversation", "children"), [Input("store-conversation", "data")]
     )
@@ -72,10 +72,29 @@ def register_callbacks(app):
         if not ws_message:
             return chat_history, False
         
-        server_response = ws_message["data"]
+        error_response = "Apologies, I am unable to fulfill this request. Please try again and ensure that you provide a company ticker and limit your questions to financial analysis."
         
-        model_output = server_response
+        try:
+            server_response = ws_message["data"]
 
-        chat_history += f"{model_output}<split>"
+            server_response = json.loads(server_response)
+            if(server_response["sender"]=="ratios_agent"):
+                model_output = server_response["response"]
 
-        return chat_history, False
+            elif(server_response["sender"]=="techplot_agent"):
+                model_output = server_response["response"]
+
+            elif(server_response["response"]=="Error"):
+                model_output = error_response
+            
+            else:
+                raise TypeError(f"Incorrect server response format. Got response: {server_response}")
+
+        except Exception as e:
+            model_output = error_response
+            print(f"Error retriving server response: {e}")
+
+        finally:
+            chat_history += f"{model_output}<split>"
+            return chat_history, False
+    
