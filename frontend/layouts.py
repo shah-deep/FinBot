@@ -10,10 +10,10 @@ def create_app_layout():
     conversation = html.Div(
         html.Div(id="display-conversation"),
         style={
-            "overflow-y": "auto",
+            "overflowY": "auto",
             "display": "flex",
             "height": "calc(90vh - 132px)",
-            "flex-direction": "column-reverse",
+            "flexDirection": "column-reverse",
         },
     )
 

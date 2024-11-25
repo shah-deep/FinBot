@@ -149,7 +149,7 @@ def calculate_roe(cik: str) -> float:
 
         
         if net_income and equity:
-            return net_income / equity
+            return round(net_income / equity, 4)
         
         return 0
 
@@ -182,7 +182,7 @@ def calculate_roa(cik: str) -> float:
 
         
         if net_income and assets:
-            return net_income / assets
+            return round(net_income / assets, 4)
         
         return 0
 
@@ -215,7 +215,7 @@ def calculate_net_profit_margin(cik: str) -> float:
 
         
         if net_income and revenue:
-            return net_income / revenue
+            return round(net_income / revenue, 4)
         
         return 0
 
@@ -248,7 +248,7 @@ def calculate_gross_margin(cik: str) -> float:
 
         
         if gross_profit and revenue:
-            return gross_profit / revenue
+            return round(gross_profit / revenue, 4)
         
         # print(f"Gross margin for CIK: {cik}. GP:  {gross_profit} | R: {revenue}")
         return 0
@@ -281,7 +281,7 @@ def calculate_debt_equity(cik: str) -> float:
 
         
         if liabilities and equity:
-            return liabilities / equity
+            return round(liabilities / equity, 4)
         
         return 0
 
@@ -314,7 +314,7 @@ def calculate_interest_coverage(cik: str) -> float:
 
         
         if operating_income and interest_expense:
-            return operating_income / interest_expense
+            return round(operating_income / interest_expense, 4)
         
         # print(f"interest_coverage for CIK: {cik}. OI:  {operating_income} | IE: {interest_expense}")
         return 0

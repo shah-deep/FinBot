@@ -6,20 +6,20 @@ from dash.dependencies import Input, Output, State
 def register_callbacks(app):
     def textbox(text, box="AI"):
         style = {
-            "max-width": "60%",
+            "maxWidth": "60%",
             "width": "max-content",
             "padding": "2px 6px",
-            "margin-bottom": 20,
+            "marginBottom": 20,
         }
 
         if box == "user":
-            style["margin-left"] = "auto"
-            style["margin-right"] = 0
+            style["marginLeft"] = "auto"
+            style["marginRight"] = 0
             return dbc.Card(text, style=style, body=True, color="secondary", inverse=True)
 
         elif box == "AI":
-            style["margin-left"] = 0
-            style["margin-right"] = "auto"
+            style["marginLeft"] = 0
+            style["marginRight"] = "auto"
             textbox = dbc.Card(text, style=style, body=True, color="light", inverse=False)
             return html.Div(textbox)
 

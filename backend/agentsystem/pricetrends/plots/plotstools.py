@@ -5,6 +5,8 @@ import time, os
 import matplotlib.pyplot as plt
 from langchain.tools import tool
 
+source_dir = os.path.join('data', 'csv')
+output_dir = os.path.join('data', 'img')
 
 @tool
 def get_file_path(ticker: str, trend: str, window: int = 0) -> str:
@@ -49,7 +51,7 @@ def create_plots(file_paths: list) -> str:
         file_name_parts = []
 
         for file_path in file_paths:
-            df = pd.read_csv(file_path)
+            df = pd.read_csv(os.path.join(source_dir, file_path))
             
             df['Date'] = pd.to_datetime(df['Date'])  # Ensure Date is in datetime format
             df['Values'] = df['Values'].astype(float)  # Ensure Values are floats
@@ -67,7 +69,7 @@ def create_plots(file_paths: list) -> str:
         plt.tight_layout()
 
         image_file_name = '_'.join(file_name_parts) + '.png'
-        plt.savefig(image_file_name)
+        plt.savefig(os.path.join(output_dir, image_file_name))
 
         return image_file_name
     

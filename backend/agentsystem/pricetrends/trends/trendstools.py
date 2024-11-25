@@ -7,7 +7,7 @@ from langchain.tools import tool
 
 
 stock_data = {}  
-root_dir = ''
+root_dir = os.path.join('data', 'csv')
 
 @tool
 def refresh_stock_data(ticker: str) -> str:
@@ -69,7 +69,7 @@ def get_closing_price(ticker: str) -> str:
     try:
         closing_price = stock_data[ticker]["data"]['Close']
         closing_price.columns = ['Values']
-        save_path = f"{ticker.upper()}_closing_price.csv"
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_closing_price.csv")
         closing_price.to_csv(save_path)
 
         return f"Got Closing Prices for {ticker}"
