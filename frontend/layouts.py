@@ -3,7 +3,7 @@ from dash import html
 from dash import dcc
 import dash_bootstrap_components as dbc
 from dash_extensions import WebSocket
-from PIL import Image
+
 
 conversation = html.Div(
     html.Div(id="display-conversation"),

@@ -1,30 +1,38 @@
-import json
 from dash import html
 import dash_bootstrap_components as dbc
 from dash_extensions import WebSocket
 from dash.dependencies import Input, Output, State
+import os
+import json
+from PIL import Image
 
-def textbox(text, box="AI"):
-        style = {
-            "maxWidth": "60%",
-            "width": "max-content",
-            "padding": "2px 6px",
-            "marginBottom": 20,
-        }
+image_source_path = os.path.join('./', 'data', 'img')
 
-        if box == "user":
-            style["marginLeft"] = "auto"
-            style["marginRight"] = 0
-            return dbc.Card(text, style=style, body=True, color="secondary", inverse=True)
+def textbox(chat_msg, box="AI"):
+    style = {
+        "maxWidth": "60%",
+        "width": "max-content",
+        "padding": "2px 6px",
+        "marginBottom": 20,
+    }
 
-        elif box == "AI":
-            style["marginLeft"] = 0
-            style["marginRight"] = "auto"
-            textbox = dbc.Card(text, style=style, body=True, color="light", inverse=False)
-            return html.Div(textbox)
+    if box == "user":
+        style["marginLeft"] = "auto"
+        style["marginRight"] = 0
+        return dbc.Card(chat_msg, style=style, body=True, color="secondary", inverse=True)
 
-        else:
-            raise ValueError("Incorrect option for textbox.")
+    elif box == "AI":
+        style["marginLeft"] = 0
+        style["marginRight"] = "auto"
+        if(chat_msg[-4:]==".png" or chat_msg[-4:]==".jpg"):
+            image_style = {"width": "100%", "height": "auto", "object-fit": "contain"}
+            curr_img_source = os.path.join(image_source_path, chat_msg)
+            chat_msg = html.Img(src=Image.open(curr_img_source), style=image_style)
+
+        return dbc.Card(chat_msg, style=style, body=True, color="light", inverse=False)
+
+    else:
+        raise ValueError("Incorrect option for textbox.")
 
 def register_callbacks(app):
     @app.callback(
