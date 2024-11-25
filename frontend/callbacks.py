@@ -1,8 +1,6 @@
-
-import dash
 from dash import html
-from dash import dcc
 import dash_bootstrap_components as dbc
+from dash_extensions import WebSocket
 from dash.dependencies import Input, Output, State
 
 def register_callbacks(app):
@@ -28,6 +26,7 @@ def register_callbacks(app):
         else:
             raise ValueError("Incorrect option for `box`.")
         
+
     @app.callback(
         Output("display-conversation", "children"), [Input("store-conversation", "data")]
     )
@@ -36,8 +35,7 @@ def register_callbacks(app):
             textbox(x, box="user") if i % 2 == 0 else textbox(x, box="AI")
             for i, x in enumerate(chat_history.split("<split>")[:-1])
         ]
-
-
+    
     @app.callback(
         Output("user-input", "value"),
         [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
@@ -47,23 +45,36 @@ def register_callbacks(app):
 
 
     @app.callback(
-        Output("store-conversation", "data"),
+        [Output('ws', 'send'), Output("store-conversation", "data", allow_duplicate=True)],
         [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
         [State("user-input", "value"), State("store-conversation", "data")],
+        prevent_initial_call=True
     )
-    def run_chatbot(n_clicks, n_submit, user_input, chat_history):
+    def send_server_message(n_clicks, n_submit, user_input, chat_history):
         if n_clicks == 0 and n_submit is None:
-            return ""
+            return "", ""
 
         if user_input is None or user_input == "":
-            return chat_history
-
-
-        # First add the user input to the chat history
-        chat_history += f"{user_input}<split>"
-
+            return "", chat_history
         
-        model_output = "AI Response"
+        chat_history += f"{user_input}<split>"
+        
+        return user_input, chat_history
+    
+
+    @app.callback(
+        Output("store-conversation", "data"),
+        Input('ws', 'message'),
+        State("store-conversation", "data"),
+    )
+    def get_server_message(ws_message, chat_history):
+
+        if not ws_message:
+            return chat_history
+        
+        server_response = ws_message["data"]
+        
+        model_output = server_response
 
         chat_history += f"{model_output}<split>"
 
