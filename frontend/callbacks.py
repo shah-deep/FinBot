@@ -45,32 +45,32 @@ def register_callbacks(app):
 
 
     @app.callback(
-        [Output('ws', 'send'), Output("store-conversation", "data", allow_duplicate=True)],
+        [Output('ws', 'send'), Output("store-conversation", "data", allow_duplicate=True), Output("user-input", "disabled", allow_duplicate=True)],
         [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
         [State("user-input", "value"), State("store-conversation", "data")],
         prevent_initial_call=True
     )
     def send_server_message(n_clicks, n_submit, user_input, chat_history):
         if n_clicks == 0 and n_submit is None:
-            return "", ""
+            return "", "", False
 
         if user_input is None or user_input == "":
-            return "", chat_history
+            return "", chat_history, False
         
         chat_history += f"{user_input}<split>"
         
-        return user_input, chat_history
+        return user_input, chat_history, True
     
 
     @app.callback(
-        Output("store-conversation", "data"),
+        [Output("store-conversation", "data"), Output('user-input', 'disabled')],
         Input('ws', 'message'),
         State("store-conversation", "data"),
     )
     def get_server_message(ws_message, chat_history):
 
         if not ws_message:
-            return chat_history
+            return chat_history, False
         
         server_response = ws_message["data"]
         
@@ -78,4 +78,4 @@ def register_callbacks(app):
 
         chat_history += f"{model_output}<split>"
 
-        return chat_history
+        return chat_history, False
