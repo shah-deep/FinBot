@@ -6,7 +6,7 @@ from callbacks import register_callbacks
 
 def make_chat_app(server):
 
-    ticker = request.args.get('t', '')
+    ticker = request.args.get('q', 'No msg')
 
     app = dash.Dash(
         __name__, 

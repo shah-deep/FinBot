@@ -18,6 +18,7 @@ class SupervisorAgent:
 
     def __init__(self, company_ticker):   
         self.company_ticker = company_ticker 
+        self.tkr_msg = f"  Company Ticker is '{self.company_ticker}.'"
         self.ratios_agent = create_finratios_agent(verbose=False)
         self.techplot_agent = PricesAgent().prices_graph_builder()
         self.llm = ChatCohere(model="command-r-plus")
@@ -38,6 +39,7 @@ class SupervisorAgent:
 
     def ratios_node(self, state: State) -> State:
         content = self.get_message_content(state)
+        content += self.tkr_msg
         response = self.ratios_agent.invoke({"input": content})
         print("Ratios Node Response: ", response)
         return {"messages": [
@@ -50,6 +52,7 @@ class SupervisorAgent:
 
     def techplot_node(self, state: State) -> State:
         content = self.get_message_content(state)
+        content += self.tkr_msg
         response = self.techplot_agent.invoke({"messages": HumanMessage(content=content), })
         print("Techplot Node Response: ", response)
         
