@@ -1,11 +1,13 @@
 import dash
 import dash_bootstrap_components as dbc
-
+from flask import request
 from layouts import create_app_layout
 from callbacks import register_callbacks
 
 def make_chat_app(server):
-# Define app
+
+    ticker = request.args.get('t', '')
+
     app = dash.Dash(
         __name__, 
         server=server, 
@@ -15,7 +17,7 @@ def make_chat_app(server):
     app.title = "FinBot"
 
     # Set up app layout
-    app.layout = create_app_layout()
+    app.layout = create_app_layout(ticker)
 
     # Register callbacks
     register_callbacks(app)

@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from .agentsystem.utils import create_agent, HelperAgent
 
 app = FastAPI()
@@ -23,9 +23,9 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 @app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(websocket: WebSocket, tkr: str = Query(None)):
     await manager.connect(websocket)
-    agent = create_agent()
+    agent = create_agent(tkr)
     try:
         while True:
             user_input = await websocket.receive_text()

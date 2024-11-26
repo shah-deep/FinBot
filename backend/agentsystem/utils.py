@@ -40,8 +40,8 @@ class HelperAgent:
         return self.graph
 
 
-def create_agent():
-    agent_maker = SupervisorAgent()
+def create_agent(company_ticker: str):
+    agent_maker = SupervisorAgent(company_ticker)
     graph = agent_maker.supervisor_graph_builder()
     agent = HelperAgent(graph)
     return agent

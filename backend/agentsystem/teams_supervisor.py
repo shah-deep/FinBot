@@ -16,7 +16,8 @@ from langgraph.graph.message import add_messages
 
 class SupervisorAgent:
 
-    def __init__(self):    
+    def __init__(self, company_ticker):   
+        self.company_ticker = company_ticker 
         self.ratios_agent = create_finratios_agent(verbose=False)
         self.techplot_agent = PricesAgent().prices_graph_builder()
         self.llm = ChatCohere(model="command-r-plus")
