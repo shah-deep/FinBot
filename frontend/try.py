@@ -1,94 +1,69 @@
-from flask import Flask, request
-import dash
-from dash import dcc, html
+import websocket
+import time
+import asyncio
+import threading
 
-# Create Flask server
-server = Flask(__name__)
+class ConnectionHandler:
+    def __init__(self):
+        self.curr_response = ''
+        self.ws = None
+        self.ticker = None
 
-# Create Dash app
-app = dash.Dash(__name__, server=server, url_base_pathname='/dash/')
+    def on_message(self, ws, message):
+        self.curr_response = message
 
-# Dash layout
-app.layout = html.Div(id='output')
+    def get_message(self):
+        # Instead of busy-waiting, use an asyncio event to wait for the response.
+        while not self.curr_response:
+            time.sleep(0.1)  # Sleep briefly to avoid 100% CPU usage
+        temp = self.curr_response
+        self.curr_response = ''
+        return temp
 
-# Callback to display query parameter
-@app.callback(
-    dash.dependencies.Output('output', 'children'),
-    dash.dependencies.Input('output', 'id')  # Dummy input to trigger on page load
-)
-def display_query_parameter(_):
-    # Access the Flask request object
-    q = request.args.get('q', default='No query provided')
-    return f"Query parameter 'q': {q}"
+    def on_error(self, ws, error):
+        self.curr_response = "Error"
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
+    def on_close(self, ws, close_status_code, close_msg):
+        print("Connection closed. Reconnecting...")
+        asyncio.run(self.connect_server(self.ticker))  # Use asyncio.run to schedule the async task
 
+    def on_open(self, ws):
+        print("Connection established.")
+        # ws.send("Hello, server!")  # You can send an initial message if needed.
 
+    def create_connection(self, ticker):
+        ws = websocket.WebSocketApp(
+            f"ws://127.0.0.1:8000/ws?tkr={ticker}",
+            on_message=self.on_message,
+            on_error=self.on_error,
+            on_close=self.on_close,
+            on_open=self.on_open
+        )
+        return ws
 
+    async def connect_server(self, ticker):
+        self.ticker = ticker
+        self.ws = self.create_connection(ticker)
+        def run_ws():
+            self.ws.run_forever()
 
+        # Start WebSocket in a separate thread to avoid blocking
+        ws_thread = threading.Thread(target=run_ws)
+        ws_thread.start()
 
+        while True:
+            await asyncio.sleep(1)  # Keep the event loop running while waiting
 
+    def send_message(self, message):
+        if self.ws and self.ws.sock and self.ws.sock.connected:
+            self.ws.send(message)
 
+# Example usage:
+async def main():
+    handler = ConnectionHandler()
+    await handler.connect_server("AAPL")
+    print("Sending a test message...")
+    handler.send_message("Test Message")
+    await asyncio.sleep(10)  # Keep the connection open for 10 seconds
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-from flask import Flask, request, redirect, url_for
-from dash import Dash, html, dcc
-
-# Initialize Flask
-server = Flask(__name__)
-
-# Initialize Dash
-dash_app = Dash(__name__, server=server, url_base_pathname='/dash/')
-
-# Define the Dash layout
-dash_app.layout = html.Div([
-    html.H1("Dash App Embedded in Flask"),
-    html.Div(id='query-output', children="Query parameters will appear here."),
-    dcc.Input(id='input', type='text', placeholder='Enter something'),
-    html.Button('Submit', id='button'),
-])
-
-# Flask route
-@server.route('/')
-def home():
-    # Flask route that accepts query parameters
-    name = request.args.get('name', 'Guest')
-    return f"Hello, {name}! Visit the Dash app at /dash/"
-
-# Flask route to dynamically redirect to Dash with a query string
-@server.route('/go-to-dash')
-def go_to_dash():
-    user = request.args.get('user', 'anonymous')
-    # Redirect to the Dash app with a query parameter
-    return redirect(url_for('dash', user=user))
-
-# Dash callback to capture and display query parameters
-@dash_app.server.route('/dash/')
-def dash():
-    # Retrieve query parameters
-    user = request.args.get('user', 'No user provided')
-    return f"Hello from Dash! User: {user}"
-
-# Run the Flask server
-if __name__ == '__main__':
-    server.run(debug=True)
+asyncio.run(main())
