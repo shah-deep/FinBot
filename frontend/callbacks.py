@@ -7,6 +7,7 @@ from PIL import Image
 import urllib.parse
 from connection import ConnectionHandler
 import asyncio
+import yfinance as yf
 
 
 class CallbacksHandler:
@@ -72,17 +73,30 @@ class CallbacksHandler:
         #     return socket
 
         @self.app.callback(
+            Output("redirect_home", "href"),
             Input('url', 'search')
         )
         def update_query_param(query_string):
             global conn
             params = urllib.parse.parse_qs(query_string.lstrip('?'))
             ticker = params.get('t', [''])[0]
+            ticker = str(ticker).upper()
+            try:
+                info = yf.Ticker(ticker).history(
+                            period='5d',
+                            interval='1d')
+                if(len(info) == 0):
+                    return "/?res=Error"
+            except:
+                print("Got fin error")
+                return "/?res=Error"
+
             conn = ConnectionHandler()
             print("conn1  ", conn)
             asyncio.run(conn.connect_server(ticker))
             # time.sleep(5)
             print("conn2  ", conn)
+            return None
 
 
         # def register_socket_callbacks(app):

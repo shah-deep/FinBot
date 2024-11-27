@@ -6,7 +6,9 @@ app = make_chat_app(server)
 
 @server.route("/")
 def home():
-    return render_template("index.html")
+    error_message = request.args.get("res")
+    show_alert = error_message == "Error"
+    return render_template("index.html", show_alert=show_alert)
 
 @server.route("/redirect", methods=["POST"])
 def handle_redirect():

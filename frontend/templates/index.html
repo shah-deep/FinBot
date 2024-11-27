@@ -9,6 +9,13 @@
 <body>
     <div class="container mt-5 text-center">
         <h1 class="mb-4">Hi, this is FinBot!</h1>
+
+        {% if show_alert %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> Please provide a valid company ticker.
+        </div>
+        {% endif %}
+
         <form action="/redirect" method="POST" class="d-flex justify-content-center">
             <input 
                 type="text" 
