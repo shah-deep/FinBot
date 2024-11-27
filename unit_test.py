@@ -48,4 +48,6 @@ class TestChatApp(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    # Get Return on Equity (ROE), Return on Assets (ROA), Net Profit Margin, Gross Margin, Debt to Equity, and Interest Coverage.
+    # Show a comparision of closing prices, moving average for window 15, short moving average, long moving average, and exponential moving average for span 5.
     unittest.main()

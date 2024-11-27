@@ -62,17 +62,6 @@ class CallbacksHandler:
             return ""
         
 
-        # @self.app.callback(
-        #     Output('main_container', 'children'),
-        #     Input('url', 'search')
-        # )
-        # def update_query_param(query_string):
-        #     params = urllib.parse.parse_qs(query_string.lstrip('?'))
-        #     ticker = params.get('t', [''])[0]
-        #     socket = WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}')
-            
-        #     return socket
-
         @self.app.callback(
             Output("redirect_home", "href"),
             Input('url', 'search')
@@ -143,7 +132,7 @@ class CallbacksHandler:
             if not server_response:
                 return chat_history, False
             
-            error_response = "Apologies, I am unable to fulfill this request. Please try again and ensure that you provide a company ticker and limit your questions to financial analysis."
+            error_response = "Apologies, I am unable to fulfill this request. Please try again and restrict your questions to financial analysis."
             
             try:
                 # server_response = ws_message
@@ -154,12 +143,12 @@ class CallbacksHandler:
 
                 elif(server_response["sender"]=="techplot_agent"):
                     model_output = server_response["response"]
-
-                elif(server_response["response"]=="Error"):
-                    model_output = error_response
                 
                 else:
-                    raise TypeError(f"Incorrect server response format. Got response: {server_response}")
+                    raise ValueError(f"Incorrect server sender. Got response: {server_response}")
+                
+                if(server_response["response"]=="Error"):
+                    model_output = error_response
 
             except Exception as e:
                 model_output = error_response

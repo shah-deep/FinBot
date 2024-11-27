@@ -27,7 +27,8 @@ class ConnectionHandler:
 
     def on_close(self, ws, close_status_code, close_msg):
         # print("Connection closed. Reconnecting...")
-        asyncio.run(self.connect_server(self.ticker))  # Use asyncio.run to schedule the async task
+        # asyncio.run(self.connect_server(self.ticker))  
+        print("Connection Closed")
 
     def on_open(self, ws):
         # print("Connection established.")

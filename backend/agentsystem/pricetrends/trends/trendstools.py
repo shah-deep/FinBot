@@ -159,7 +159,7 @@ def get_long_moving_average(ticker: str) -> str:
         closing_price = stock_data[ticker]["data"]['Close']
         moving_average = closing_price.rolling(window=window).mean()
         moving_average.columns = ['Values']
-        save_path = os.path.join(root_dir, f"{ticker.upper()}_long_moving_average_{window}.csv")
+        save_path = os.path.join(root_dir, f"{ticker.upper()}_long_moving_average.csv")
         moving_average.to_csv(save_path)
 
         return f"Got Long Moving Average for {ticker}"

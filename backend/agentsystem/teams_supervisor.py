@@ -97,7 +97,7 @@ class SupervisorAgent:
             Available {agent_name_var}s and their capabilities:
             - ratios_agent: {agent_utilities['ratios_agent']}
             - techplot_agent: {agent_utilities['techplot_agent']}
-            - finish: If none of the previous {agent_name_var}s can do this task or if company's ticker is not give.
+            - finish: If none of the previous {agent_name_var}s can do this task.
 
             Respond with one of the following options:
             "ratios_agent" | "techplot_agent" | "finish"
