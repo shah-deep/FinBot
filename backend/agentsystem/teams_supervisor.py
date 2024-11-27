@@ -103,9 +103,7 @@ class SupervisorAgent:
             "ratios_agent" | "techplot_agent" | "finish"
             """
         )
-        #  Check if both are true: a company's ticker is provided in the user input and the request is related to financial metrics or trends analysis. If not, respond with "finish". 
-
-
+       
 
     def supervisor_node(self, state: State) -> State:
         # print("STATE Supervisor ", state)
