@@ -31,7 +31,8 @@ def create_app_layout():
         children=[
             dcc.Location(id="redirect_home", refresh=True),
             dcc.Location(id='url', refresh=False),
-            html.Div(id="ws_msg_holder", style={'display': 'none'}, children=""),
+            html.Div(id="ws-msg-holder", style={'display': 'none'}, children=""),
+            html.Div(id="userinput-holder", style={'display': 'none'}, children=""),
             dcc.Store(id="store-conversation", data=""),
             conversation,
             controls,

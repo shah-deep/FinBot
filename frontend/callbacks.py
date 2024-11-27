@@ -45,7 +45,8 @@ class CallbacksHandler:
     def register_callbacks(self):
         
         @self.app.callback(
-            Output("display-conversation", "children"), [Input("store-conversation", "data")]
+            Output("display-conversation", "children"), 
+            Input("store-conversation", "data")
         )
         def update_display(chat_history):
             return [
@@ -101,13 +102,14 @@ class CallbacksHandler:
 
         # def register_socket_callbacks(app):
         @self.app.callback(
-            [Output('ws_msg_holder', 'children'), Output("store-conversation", "data", allow_duplicate=True), Output("user-input", "disabled", allow_duplicate=True)],
+            [Output("userinput-holder", "children"), 
+             Output("store-conversation", "data"), 
+             Output("user-input", "disabled", allow_duplicate=True)],
             [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
             [State("user-input", "value"), State("store-conversation", "data")],
             prevent_initial_call=True
         )
         def send_server_message(n_clicks, n_submit, user_input, chat_history):
-            global conn
             if n_clicks == 0 and n_submit is None:
                 return "", "", False
 
@@ -115,14 +117,24 @@ class CallbacksHandler:
                 return "", chat_history, False
             
             chat_history += f"{user_input}<split>"
-            conn.send_message(user_input)
-            response = conn.get_message()
-            return response, chat_history, True
+            return user_input, chat_history, True
         
 
         @self.app.callback(
-            [Output("store-conversation", "data"), Output('user-input', 'disabled')],
-            Input('ws_msg_holder', 'children'),
+            Output("ws-msg-holder", "children"),
+            Input("userinput-holder", "children"),
+            prevent_initial_call=True
+        )
+        def send_server_message(user_input):
+            global conn
+            conn.send_message(user_input)
+            response = conn.get_message()
+            return response
+        
+
+        @self.app.callback(
+            [Output("store-conversation", "data", allow_duplicate=True), Output('user-input', 'disabled')],
+            Input('ws-msg-holder', 'children'),
             State("store-conversation", "data"),
             prevent_initial_call=True
         )
