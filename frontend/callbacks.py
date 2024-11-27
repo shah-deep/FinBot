@@ -7,6 +7,9 @@ import json
 from PIL import Image
 import urllib.parse
 
+from connection import ConnectionHandler
+import asyncio
+
 
 image_source_path = os.path.join('./', 'data', 'img')
 
@@ -37,6 +40,7 @@ def textbox(chat_msg, box="AI"):
         raise ValueError("Incorrect option for textbox.")
 
 def register_callbacks(app):
+    conn = None
     @app.callback(
         Output("display-conversation", "children"), [Input("store-conversation", "data")]
     )
@@ -66,20 +70,18 @@ def register_callbacks(app):
     #     return socket
 
     @app.callback(
-        Output('ws', 'url'),
         Input('url', 'search')
     )
     def update_query_param(query_string):
         params = urllib.parse.parse_qs(query_string.lstrip('?'))
         ticker = params.get('t', [''])[0]
-        url=f'ws://127.0.0.1:8000/ws?tkr={ticker}'
-        
-        return url
+        conn = ConnectionHandler()
+        asyncio.run(conn.connect_server(ticker))
 
 
     # def register_socket_callbacks(app):
     @app.callback(
-        [Output('ws', 'send'), Output("store-conversation", "data", allow_duplicate=True), Output("user-input", "disabled", allow_duplicate=True)],
+        [Output('ws_msg_holder', 'children'), Output("store-conversation", "data", allow_duplicate=True), Output("user-input", "disabled", allow_duplicate=True)],
         [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
         [State("user-input", "value"), State("store-conversation", "data")],
         prevent_initial_call=True
@@ -92,25 +94,26 @@ def register_callbacks(app):
             return "", chat_history, False
         
         chat_history += f"{user_input}<split>"
-        
-        return user_input, chat_history, True
+        conn.send_message(user_input)
+        response = conn.get_message()
+        return response, chat_history, True
     
 
     @app.callback(
         [Output("store-conversation", "data"), Output('user-input', 'disabled')],
-        Input('ws', 'message'),
+        Input('ws_msg_holder', 'children'),
         State("store-conversation", "data"),
         prevent_initial_call=True
     )
-    def get_server_message(ws_message, chat_history):
+    def get_server_message(server_response, chat_history):
 
-        if not ws_message:
+        if not server_response:
             return chat_history, False
         
         error_response = "Apologies, I am unable to fulfill this request. Please try again and ensure that you provide a company ticker and limit your questions to financial analysis."
         
         try:
-            server_response = ws_message["data"]
+            # server_response = ws_message
 
             server_response = json.loads(server_response)
             if(server_response["sender"]=="ratios_agent"):
