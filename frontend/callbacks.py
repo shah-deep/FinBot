@@ -5,6 +5,8 @@ from dash.dependencies import Input, Output, State
 import os
 import json
 from PIL import Image
+import urllib.parse
+
 
 image_source_path = os.path.join('./', 'data', 'img')
 
@@ -107,3 +109,13 @@ def register_callbacks(app):
             chat_history += f"{model_output}<split>"
             return chat_history, False
     
+    @app.callback(
+        Output('main_container', 'children'),
+        Input('url', 'search')
+    )
+    def update_query_param(query_string):
+        params = urllib.parse.parse_qs(query_string.lstrip('?'))
+        ticker = params.get('t', [''])[0]
+        socket = WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}')
+        
+        return socket

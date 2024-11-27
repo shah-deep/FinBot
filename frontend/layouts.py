@@ -26,9 +26,10 @@ controls = dbc.InputGroup(
 def create_app_layout(ticker: str):
 
     container = dbc.Container(
+        id="main_container",
         fluid=False,
         children=[
-            # WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}'),
+            dcc.Location(id='url', refresh=False),
             dcc.Store(id="store-conversation", data=""),
             conversation,
             controls,
