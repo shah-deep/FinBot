@@ -52,8 +52,32 @@ def register_callbacks(app):
     )
     def clear_input(n_clicks, n_submit):
         return ""
+    
+
+    # @app.callback(
+    #     Output('main_container', 'children'),
+    #     Input('url', 'search')
+    # )
+    # def update_query_param(query_string):
+    #     params = urllib.parse.parse_qs(query_string.lstrip('?'))
+    #     ticker = params.get('t', [''])[0]
+    #     socket = WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}')
+        
+    #     return socket
+
+    @app.callback(
+        Output('ws', 'url'),
+        Input('url', 'search')
+    )
+    def update_query_param(query_string):
+        params = urllib.parse.parse_qs(query_string.lstrip('?'))
+        ticker = params.get('t', [''])[0]
+        url=f'ws://127.0.0.1:8000/ws?tkr={ticker}'
+        
+        return url
 
 
+    # def register_socket_callbacks(app):
     @app.callback(
         [Output('ws', 'send'), Output("store-conversation", "data", allow_duplicate=True), Output("user-input", "disabled", allow_duplicate=True)],
         [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
@@ -109,13 +133,3 @@ def register_callbacks(app):
             chat_history += f"{model_output}<split>"
             return chat_history, False
     
-    @app.callback(
-        Output('main_container', 'children'),
-        Input('url', 'search')
-    )
-    def update_query_param(query_string):
-        params = urllib.parse.parse_qs(query_string.lstrip('?'))
-        ticker = params.get('t', [''])[0]
-        socket = WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}')
-        
-        return socket
