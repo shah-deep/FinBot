@@ -81,11 +81,9 @@ class CallbacksHandler:
                 # print("Got fin error")
                 return "/?res=Error"
 
+            self.ticker = ticker
             conn = ConnectionHandler()
-            # print("conn1  ", conn)
             asyncio.run(conn.connect_server(ticker))
-            # time.sleep(5)
-            # print("conn2  ", conn)
             return None
 
 
