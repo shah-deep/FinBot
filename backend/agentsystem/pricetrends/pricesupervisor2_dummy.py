@@ -48,7 +48,7 @@ def trends_node(state: State) -> State:
 def plots_node(state: State) -> State:
     content = get_message_content(state)
     response = plot_agent.invoke({"input": content})
-    print("Trends Node Response: ", response)
+    print("Plots Node Response: ", response)
     return {"messages": [
             {
                 "sender": "plot_agent",
@@ -103,12 +103,12 @@ class Router(TypedDict):
 llm = ChatCohere(model="command-r-plus")
 
 def supervisor_node(state: State) -> State:
-    print("STATE Supervisor ", state)
+    # print("STATE Supervisor ", state)
 
     messages = [SystemMessage(content=system_prompt)] + state["messages"]
     response = llm.invoke(messages) # .with_structured_output(Router)
     content_ = state["messages"]
-    print("Response Content  ", response.content)
+    # print("Response Content  ", response.content)
     next_ = "supervisor"
     
     if(response.content[0]=='{'):
@@ -117,7 +117,7 @@ def supervisor_node(state: State) -> State:
         if isinstance(ai_msg, dict):
             next_ = ai_msg["next"]
             content_ = ai_msg["prompt"]
-            print(f"Got Next: {next_}")
+            # print(f"Got Next: {next_}")
     
     if(next_ == "supervisor"):
         print("ERROR in sup node")
@@ -135,14 +135,14 @@ def supervisor_node(state: State) -> State:
         ]}
 
 def route_tools(state: State):
-    print(state)
+    # print(state)
     if (isinstance(state, dict) and ("messages" in state)):
         last_message = state["messages"][-1]
         if(isinstance(last_message, BaseMessage) and ('next' in last_message.additional_kwargs)):
             args = last_message.additional_kwargs
             if(args["sender"]=="supervisor"):
                 return args["next"]
-    print("Returned Supervisor")
+    # print("Returned Supervisor")
     return "supervisor"
     
 

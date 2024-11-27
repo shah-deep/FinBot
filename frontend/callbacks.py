@@ -89,14 +89,14 @@ class CallbacksHandler:
                 if(len(info) == 0):
                     return "/?res=Error"
             except:
-                print("Got fin error")
+                # print("Got fin error")
                 return "/?res=Error"
 
             conn = ConnectionHandler()
-            print("conn1  ", conn)
+            # print("conn1  ", conn)
             asyncio.run(conn.connect_server(ticker))
             # time.sleep(5)
-            print("conn2  ", conn)
+            # print("conn2  ", conn)
             return None
 
 

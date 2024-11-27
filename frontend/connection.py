@@ -11,26 +11,26 @@ class ConnectionHandler:
 
     def on_message(self, ws, message):
         self.curr_response = message
-        print("Got message: ", self.curr_response)
+        # print("Got message: ", self.curr_response)
 
     def get_message(self):
-        print("Waiting to get message")
+        # print("Waiting to get message")
         while not self.curr_response:
             time.sleep(0.1)  
         temp = self.curr_response
         self.curr_response = ''
-        print("Sending message")
+        # print("Sending message")
         return temp
 
     def on_error(self, ws, error):
         self.curr_response = "Error"
 
     def on_close(self, ws, close_status_code, close_msg):
-        print("Connection closed. Reconnecting...")
+        # print("Connection closed. Reconnecting...")
         asyncio.run(self.connect_server(self.ticker))  # Use asyncio.run to schedule the async task
 
     def on_open(self, ws):
-        print("Connection established.")
+        # print("Connection established.")
         # ws.send("Hello, server!")  # You can send an initial message if needed.
         pass
 

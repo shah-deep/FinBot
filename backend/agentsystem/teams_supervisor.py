@@ -108,7 +108,7 @@ class SupervisorAgent:
 
 
     def supervisor_node(self, state: State) -> State:
-        print("STATE Supervisor ", state)
+        # print("STATE Supervisor ", state)
 
         messages = [SystemMessage(content=self.system_prompt)] + state["messages"]
         response = self.llm.invoke(messages) # .with_structured_output(Router)
@@ -117,7 +117,7 @@ class SupervisorAgent:
         if(isinstance(response, BaseMessage)):
             next_ = response.content
             next_ = next_.lower()
-            print(f"Got Next: {next_}")
+            # print(f"Got Next: {next_}")
 
         # print("Response:  ", response)    
         if(next_ not in ["ratios_agent", "techplot_agent", "finish"]):
@@ -141,11 +141,11 @@ class SupervisorAgent:
 
     def route_tools(self, state: State):
         last_message = state["messages"][-1]
-        print(last_message)
+        # print(last_message)
         if(isinstance(last_message, BaseMessage) and ('next' in last_message.additional_kwargs)):
             args = last_message.additional_kwargs
             return args["next"]
-        print("Returned Supervisor")
+        # print("Returned Supervisor")
         return END
         
 
