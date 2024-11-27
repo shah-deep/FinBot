@@ -6,7 +6,7 @@ import os
 import json
 from PIL import Image
 import urllib.parse
-
+import time
 from connection import ConnectionHandler
 import asyncio
 
@@ -41,7 +41,6 @@ def textbox(chat_msg, box="AI"):
         raise ValueError("Incorrect option for textbox.")
 
 def register_callbacks(app):
-    global conn
     
     @app.callback(
         Output("display-conversation", "children"), [Input("store-conversation", "data")]
@@ -75,11 +74,13 @@ def register_callbacks(app):
         Input('url', 'search')
     )
     def update_query_param(query_string):
+        global conn
         params = urllib.parse.parse_qs(query_string.lstrip('?'))
         ticker = params.get('t', [''])[0]
         conn = ConnectionHandler()
         print("conn1  ", conn)
         asyncio.run(conn.connect_server(ticker))
+        # time.sleep(5)
         print("conn2  ", conn)
 
 
@@ -91,6 +92,7 @@ def register_callbacks(app):
         prevent_initial_call=True
     )
     def send_server_message(n_clicks, n_submit, user_input, chat_history):
+        global conn
         if n_clicks == 0 and n_submit is None:
             return "", "", False
 
@@ -98,6 +100,7 @@ def register_callbacks(app):
             return "", chat_history, False
         
         chat_history += f"{user_input}<split>"
+        print("conn3 ", conn)
         conn.send_message(user_input)
         response = conn.get_message()
         return response, chat_history, True

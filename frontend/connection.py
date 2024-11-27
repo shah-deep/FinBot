@@ -11,12 +11,15 @@ class ConnectionHandler:
 
     def on_message(self, ws, message):
         self.curr_response = message
+        print("Got message: ", self.curr_response)
 
     def get_message(self):
+        print("Waiting to get message")
         while not self.curr_response:
             time.sleep(0.1)  
         temp = self.curr_response
         self.curr_response = ''
+        print("Sending message")
         return temp
 
     def on_error(self, ws, error):
@@ -27,7 +30,7 @@ class ConnectionHandler:
         asyncio.run(self.connect_server(self.ticker))  # Use asyncio.run to schedule the async task
 
     def on_open(self, ws):
-        # print("Connection established.")
+        print("Connection established.")
         # ws.send("Hello, server!")  # You can send an initial message if needed.
         pass
 
@@ -42,15 +45,23 @@ class ConnectionHandler:
         return ws
 
     async def connect_server(self, ticker):
+        print("in conn_server")
         self.ticker = ticker
         self.ws = self.create_connection(ticker)
-        print("Connection created and running server")
-        while True:
+        print("got conn")
+        def run_ws():
             try:
+                print("running forever")
                 self.ws.run_forever()
             except Exception as e:
                 print(f"Error occurred: {e}, retrying in 5 seconds...")
                 time.sleep(5)
+
+        ws_thread = threading.Thread(target=run_ws)
+        ws_thread.start()
+
+        # while True:
+        #     await asyncio.sleep(1) 
 
     def send_message(self, message):
         if self.ws and self.ws.sock and self.ws.sock.connected:
