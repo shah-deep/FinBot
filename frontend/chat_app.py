@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from flask import request
 from layouts import create_app_layout
-from callbacks import register_callbacks
+from callbacks import CallbacksHandler
 
 def make_chat_app(server):
     app = dash.Dash(
@@ -17,6 +17,7 @@ def make_chat_app(server):
     app.layout = create_app_layout()
 
     # Register callbacks
-    register_callbacks(app)
+    callbacks = CallbacksHandler(app)
+    callbacks.register_callbacks()
 
     return app

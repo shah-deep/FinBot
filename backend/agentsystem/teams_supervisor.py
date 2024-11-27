@@ -91,8 +91,6 @@ class SupervisorAgent:
             f"""
             You are a supervisor tasked with managing a conversation between the following {agent_name_var}s: ratios_agent and techplot_agent.
 
-            Check if both are true: a company's ticker is provided in the user input and the request is related to financial metrics or trends analysis. If not, respond with "finish". 
-
             Your responsibility is to decide which {agent_name_var} should act next, based on the user's request and the current state of the task.  
             Each {agent_name_var} will perform a task and provide results along with a status update.  
 
@@ -105,6 +103,8 @@ class SupervisorAgent:
             "ratios_agent" | "techplot_agent" | "finish"
             """
         )
+        #  Check if both are true: a company's ticker is provided in the user input and the request is related to financial metrics or trends analysis. If not, respond with "finish". 
+
 
 
     def supervisor_node(self, state: State) -> State:

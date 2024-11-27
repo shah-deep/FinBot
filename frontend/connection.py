@@ -45,23 +45,19 @@ class ConnectionHandler:
         return ws
 
     async def connect_server(self, ticker):
-        print("in conn_server")
         self.ticker = ticker
         self.ws = self.create_connection(ticker)
-        print("got conn")
+
         def run_ws():
             try:
-                print("running forever")
                 self.ws.run_forever()
             except Exception as e:
-                print(f"Error occurred: {e}, retrying in 5 seconds...")
+                print(f"Connection error occurred: {e}, retrying...")
                 time.sleep(5)
 
         ws_thread = threading.Thread(target=run_ws)
         ws_thread.start()
 
-        # while True:
-        #     await asyncio.sleep(1) 
 
     def send_message(self, message):
         if self.ws and self.ws.sock and self.ws.sock.connected:
