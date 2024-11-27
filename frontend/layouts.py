@@ -28,7 +28,7 @@ def create_app_layout(ticker: str):
     container = dbc.Container(
         fluid=False,
         children=[
-            WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}'),
+            # WebSocket(id='ws', url=f'ws://127.0.0.1:8000/ws?tkr={ticker}'),
             dcc.Store(id="store-conversation", data=""),
             conversation,
             controls,

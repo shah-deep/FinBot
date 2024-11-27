@@ -5,9 +5,6 @@ from layouts import create_app_layout
 from callbacks import register_callbacks
 
 def make_chat_app(server):
-
-    #ticker = request.args.get('q', 'No msg')
-
     app = dash.Dash(
         __name__, 
         server=server, 
@@ -17,7 +14,7 @@ def make_chat_app(server):
     app.title = "FinBot"
 
     # Set up app layout
-    app.layout = create_app_layout(ticker)
+    app.layout = create_app_layout()
 
     # Register callbacks
     register_callbacks(app)

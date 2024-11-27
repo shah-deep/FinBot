@@ -1,3 +1,56 @@
+from flask import Flask, request
+import dash
+from dash import dcc, html
+
+# Create Flask server
+server = Flask(__name__)
+
+# Create Dash app
+app = dash.Dash(__name__, server=server, url_base_pathname='/dash/')
+
+# Dash layout
+app.layout = html.Div(id='output')
+
+# Callback to display query parameter
+@app.callback(
+    dash.dependencies.Output('output', 'children'),
+    dash.dependencies.Input('output', 'id')  # Dummy input to trigger on page load
+)
+def display_query_parameter(_):
+    # Access the Flask request object
+    q = request.args.get('q', default='No query provided')
+    return f"Query parameter 'q': {q}"
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 from flask import Flask, request, redirect, url_for
 from dash import Dash, html, dcc
 

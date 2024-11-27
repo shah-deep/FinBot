@@ -74,6 +74,7 @@ def register_callbacks(app):
         [Output("store-conversation", "data"), Output('user-input', 'disabled')],
         Input('ws', 'message'),
         State("store-conversation", "data"),
+        prevent_initial_call=True
     )
     def get_server_message(ws_message, chat_history):
 
