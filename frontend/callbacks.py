@@ -12,6 +12,7 @@ import asyncio
 
 
 image_source_path = os.path.join('./', 'data', 'img')
+conn = None
 
 def textbox(chat_msg, box="AI"):
     style = {
@@ -40,7 +41,8 @@ def textbox(chat_msg, box="AI"):
         raise ValueError("Incorrect option for textbox.")
 
 def register_callbacks(app):
-    conn = None
+    global conn
+    
     @app.callback(
         Output("display-conversation", "children"), [Input("store-conversation", "data")]
     )
@@ -76,7 +78,9 @@ def register_callbacks(app):
         params = urllib.parse.parse_qs(query_string.lstrip('?'))
         ticker = params.get('t', [''])[0]
         conn = ConnectionHandler()
+        print("conn1  ", conn)
         asyncio.run(conn.connect_server(ticker))
+        print("conn2  ", conn)
 
 
     # def register_socket_callbacks(app):

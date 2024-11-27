@@ -27,8 +27,9 @@ class ConnectionHandler:
         asyncio.run(self.connect_server(self.ticker))  # Use asyncio.run to schedule the async task
 
     def on_open(self, ws):
-        print("Connection established.")
+        # print("Connection established.")
         # ws.send("Hello, server!")  # You can send an initial message if needed.
+        pass
 
     def create_connection(self, ticker):
         ws = websocket.WebSocketApp(
@@ -43,6 +44,7 @@ class ConnectionHandler:
     async def connect_server(self, ticker):
         self.ticker = ticker
         self.ws = self.create_connection(ticker)
+        print("Connection created and running server")
         while True:
             try:
                 self.ws.run_forever()
