@@ -3,6 +3,8 @@
 ### Project Description  
 This project is a multi-agent system designed to function as a **Junior Investment Analyst**. It assists real analysts in evaluating publicly traded companies by performing both fundamental and technical analyses. The system simulates collaboration between specialized agents to generate detailed financial analysis for user-selected company.  
 
+![example](./media/example.png)
+
 ---
 
 ### Key Features  
