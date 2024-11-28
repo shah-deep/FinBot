@@ -24,7 +24,7 @@ This project is a multi-agent system designed to function as a Junior Investment
     - Exponential moving averages (given span)
 
 - **Dynamic Agent Collaboration**:  
-  - Specialized agents collaborate to generate comprehensive financial reports.  
+  Specialized agents collaborate to generate comprehensive financial reports.  
 
 ---
 
