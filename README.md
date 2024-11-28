@@ -9,7 +9,7 @@ This project is a multi-agent system designed to function as a Junior Investment
 
 ### Key Features  
 - **Fundamental Analysis**:  
-  - Calculate and report:  
+  Calculate and report:  
     - Return on Equity (ROE)  
     - Return on Assets (ROA)  
     - Net Profit Margin  
@@ -18,7 +18,7 @@ This project is a multi-agent system designed to function as a Junior Investment
     - Interest Coverage Ratio  
 
 - **Technical Analysis**:  
-  - Generate and visualize:  
+  Generate and visualize:  
     - Comparison of closing prices  
     - Simple moving averages (given window size or short and long windows)  
     - Exponential moving averages (given span)
