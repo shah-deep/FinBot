@@ -1,6 +1,5 @@
 dash==2.18.2
 dash_bootstrap_components==1.6.0
-dash_extensions==1.0.19
 fastapi==0.115.5
 Flask==2.2.5
 langchain==0.3.8
