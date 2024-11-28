@@ -118,4 +118,4 @@ The multi-agent system is designed with the following components:
    - **Solution**: Stored the data on the server and passed the reference information (e.g., IDs or paths) to retrieve them when required.  
 
 2. **Challenge**: Communicating between Dash callbacks and WebSocket connections.  
-   - **Solution**: Initially tried **dash_extensions WebSocket**, but it had issues sending messages on startup. Developed a custom connection module using **asyncio**, enabling WebSocket communication to run in a separate thread seamlessly.  
+   - **Solution**: Initially tried dash_extensions WebSocket, but it had issues sending messages on startup. Developed a custom connection module using asyncio, enabling WebSocket communication to run in a separate thread seamlessly.  
