@@ -2,6 +2,7 @@ from .financialratios.finratioagent import create_finratios_agent
 from .pricetrends.pricesupervisor import PricesAgent
 
 import json
+import yfinance as yf
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.schema import BaseMessage
 from langgraph.graph import StateGraph, START, END
@@ -17,11 +18,17 @@ from langgraph.graph.message import add_messages
 class SupervisorAgent:
 
     def __init__(self, company_ticker):   
-        self.company_ticker = company_ticker 
+        self.company_ticker = company_ticker.upper()
         self.tkr_msg = f"  Company Ticker is '{self.company_ticker}.'"
         self.ratios_agent = create_finratios_agent(verbose=False)
         self.techplot_agent = PricesAgent().prices_graph_builder()
-        self.llm = ChatCohere(model="command-r-plus")
+        self.llm = ChatCohere(model="command-r-plus", temperature=0)
+
+        try:
+            self.company_info = yf.Ticker(company_ticker).info
+        except:
+            self.company_info = {"longName": "Unknown", "longBusinessSummary": "Unknown"}
+
         self.init_constants()
 
     class State(TypedDict):
@@ -58,8 +65,8 @@ class SupervisorAgent:
         
         if(isinstance(response, dict) and ("messages" in response)):
             output = response["messages"]["content"]
-        elif(isinstance(response, str) and isinstance(eval(response), dict) and ("messages" in response)):
-            output = response["messages"]["content"]
+        elif(isinstance(response, str) and isinstance(eval(response), dict) and ("messages" in eval(response))):
+            output = eval(response)["messages"]["content"]
         else:
             output = f"Plot Failed, Retry: {content}"
 
@@ -70,6 +77,28 @@ class SupervisorAgent:
                     "role": "human"
                 }      
             ]}
+    
+    
+    def compinfo_node(self, state: State) -> State:
+        content = self.get_message_content(state)
+        messages = [SystemMessage(content=self.infoagent_prompt), HumanMessage(content=content)]
+        response = self.llm.invoke(messages)
+        print("Company Info Node Response: ", response)
+
+        output = "This information is not available."
+        if(isinstance(response, BaseMessage)):
+            output = response.content
+            if(output.strip(" .").upper() == "ERROR"):
+                output = "Error"
+
+        return {"messages": [
+                {
+                    "sender": "compinfo_agent",
+                    "content": output,
+                    "role": "human"
+                }      
+            ]}
+
 
     def init_constants(self):
 
@@ -84,12 +113,13 @@ class SupervisorAgent:
             "techplot_agent": ("perform stock trend analysis by comparing and plotting technical indicators such as moving averages. "
                             "Specifically, it can be used to compare or plot "
                             "closing prices, moving average for given window, short moving average, long moving average, exponential moving average for given span."
-                            )
+                            ),
+            "compinfo_agent": "get company name, ticker or business summary"
         }
 
         self.system_prompt = (
             f"""
-            You are a supervisor tasked with managing a conversation between the following {agent_name_var}s: ratios_agent and techplot_agent.
+            You are a supervisor tasked with managing a conversation between the following {agent_name_var}s: ratios_agent, techplot_agent and compinfo_agent.
 
             Your responsibility is to decide which {agent_name_var} should act next, based on the user's request and the current state of the task.  
             Each {agent_name_var} will perform a task and provide results along with a status update.  
@@ -97,12 +127,24 @@ class SupervisorAgent:
             Available {agent_name_var}s and their capabilities:
             - ratios_agent: {agent_utilities['ratios_agent']}
             - techplot_agent: {agent_utilities['techplot_agent']}
+            - compinfo_agent: {agent_utilities['compinfo_agent']}
             - finish: If none of the previous {agent_name_var}s can do this task.
 
             Respond with one of the following options:
-            "ratios_agent" | "techplot_agent" | "finish"
+            "ratios_agent" | "techplot_agent" | "compinfo_agent" | "finish"
             """
         )
+
+        self.infoagent_prompt = (
+            f"""
+            You are a helper agent answering general questions about a company. 
+            Only give answers related to this company. If you are unable to answer related to this company, say that it is not available. 
+            If you get any errors, reply with a single word "ERROR".
+            
+            Company Name: {self.company_info["longName"]}  
+            Company Stock Ticker: {self.company_ticker}  
+            Company Business Summary: {self.company_info["longBusinessSummary"]}
+        """)
        
 
     def supervisor_node(self, state: State) -> State:
@@ -114,11 +156,11 @@ class SupervisorAgent:
         next_ = "supervisor"
         if(isinstance(response, BaseMessage)):
             next_ = response.content
-            next_ = next_.lower()
+            next_ = next_.strip(" .").lower()
             # print(f"Got Next: {next_}")
 
         # print("Response:  ", response)    
-        if(next_ not in ["ratios_agent", "techplot_agent", "finish"]):
+        if(next_ not in ["ratios_agent", "techplot_agent", "compinfo_agent", "finish"]):
             print(f"ERROR: WRONG OUTPUT FROM SUPERVISOR -- {response}")
 
         if(next_=="finish"):
@@ -126,6 +168,8 @@ class SupervisorAgent:
             content_ = "Error"
         else:
             content_ = self.get_message_content(state)
+
+        print(f"Supervisor node, next: {next_}")#, content: {content_}")
 
         return {"messages": [
                 {
@@ -153,10 +197,12 @@ class SupervisorAgent:
         builder.add_node("supervisor", self.supervisor_node)
         builder.add_node("ratios_agent", self.ratios_node)
         builder.add_node("techplot_agent", self.techplot_node)
+        builder.add_node("compinfo_agent", self.compinfo_node)
 
         # Agents will always respond to the supervisor
         builder.add_edge("ratios_agent", END)
         builder.add_edge("techplot_agent", END)
+        builder.add_edge("compinfo_agent", END)
 
         builder.add_conditional_edges("supervisor", self.route_tools)
 

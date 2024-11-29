@@ -136,12 +136,9 @@ class CallbacksHandler:
                 # server_response = ws_message
 
                 server_response = json.loads(server_response)
-                if(server_response["sender"]=="ratios_agent"):
+                if(server_response["sender"] in ["ratios_agent", "techplot_agent", "compinfo_agent"]):
                     model_output = server_response["response"]
 
-                elif(server_response["sender"]=="techplot_agent"):
-                    model_output = server_response["response"]
-                
                 else:
                     raise ValueError(f"Incorrect server sender. Got response: {server_response}")
                 
