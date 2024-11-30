@@ -81,11 +81,11 @@ This project is a multi-agent system designed to function as a Junior Investment
 
 #### System Architecture  
 - **Front End**:  
-    - Built with **Dash** and **Flask**, the front end provides an intuitive interface for user interactions.  
-    - Communicates with the backend via **WebSocket connections** for real-time updates.  
+    - Built with Dash and Flask, the front end provides an intuitive interface for user interactions.  
+    - Communicates with the backend via WebSocket connections for real-time updates.  
 
 - **Backend Server**:  
-    - Powered by **FastAPI**, the backend server listens for WebSocket connections and processes incoming queries.  
+    - Powered by FastAPI, the backend server listens for WebSocket connections and processes incoming queries.  
     - Upon connection, the server initializes the agent system to handle user requests dynamically.  
 
 #### Agent System Architecture  
