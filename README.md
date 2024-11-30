@@ -94,9 +94,9 @@ The multi-agent system is designed with the following components:
 - **Supervisor Agent**:  
     - Acts as the central controller.  
     - Forwards user messages to the appropriate agent:  
-        - **Fundamental Analysis Agent**  
-        - **Technical Analysis Agent** 
-        - **Company Info Agent**  
+        - Fundamental Analysis Agent  
+        - Technical Analysis Agent 
+        - Company Info Agent  
 
 - **Fundamental Analysis Agent**:  
     - Handles requests for financial metrics such as ROE, ROA, Net Profit Margin, etc.  
