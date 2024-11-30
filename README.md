@@ -126,3 +126,7 @@ The multi-agent system is designed with the following components:
 
 2. **Challenge**: Communicating between Dash callbacks and WebSocket connections.  
     - **Solution**: Initially tried dash_extensions WebSocket, but it had issues sending messages on startup. Developed a custom connection module using asyncio, enabling WebSocket communication to run in a separate thread seamlessly.  
+
+
+### Limitations
+ At present, FinBot can only perform one of the capabilities at a time. To accumulate responses of multiple agents, we can use with_structured_output functionality of LangChain and return the responses of the agents back to the supervisor.
