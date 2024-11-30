@@ -37,7 +37,7 @@ This project is a multi-agent system designed to function as a Junior Investment
 #### Installation  
 1. **Clone the repository**:  
    ```bash  
-   git clone https://bitbucket.org/shah-deep/finbot/
+   git clone https://shahd2@bitbucket.org/shah-deep/finbot.git
    cd FinBot  
    ```  
 
