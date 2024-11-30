@@ -51,14 +51,14 @@ This project is a multi-agent system designed to function as a Junior Investment
    ```  
 
 4. **Obtain the Cohere API key**:  
-   - Go to [Cohere Dashboard](https://dashboard.cohere.com/api-keys).  
-   - Generate your API key and note it down.  
+    - Go to [Cohere Dashboard](https://dashboard.cohere.com/api-keys).  
+    - Generate your API key and note it down.  
 
 5. **Add the API key to the environment**:  
-   - Create a `.env` file in the project directory:  
-     ```plaintext  
-     COHERE_API_KEY=<your-api-key>  
-     ```  
+    - Create a `.env` file in the project directory:  
+      ```plaintext  
+      COHERE_API_KEY=<your-api-key>  
+      ```  
 
 6. **Run the application**:  
     - Start the backend server:  
@@ -75,13 +75,13 @@ This project is a multi-agent system designed to function as a Junior Investment
 ### Architecture and Agent Design  
 
 #### System Architecture  
-    - **Front End**:  
-        - Built with **Dash** and **Flask**, the front end provides an intuitive interface for user interactions.  
-        - Communicates with the backend via **WebSocket connections** for real-time updates.  
+- **Front End**:  
+    - Built with **Dash** and **Flask**, the front end provides an intuitive interface for user interactions.  
+    - Communicates with the backend via **WebSocket connections** for real-time updates.  
 
-    - **Backend Server**:  
-        - Powered by **FastAPI**, the backend server listens for WebSocket connections and processes incoming queries.  
-        - Upon connection, the server initializes the agent system to handle user requests dynamically.  
+- **Backend Server**:  
+    - Powered by **FastAPI**, the backend server listens for WebSocket connections and processes incoming queries.  
+    - Upon connection, the server initializes the agent system to handle user requests dynamically.  
 
 #### Agent System Architecture  
 The multi-agent system is designed with the following components:  
