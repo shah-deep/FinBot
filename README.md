@@ -25,7 +25,7 @@ This project is a multi-agent system designed to function as a Junior Investment
 
 - **Company Info**:
 
-  Provides basic company info such as business summary.
+      Provides basic company info such as business summary.
 
 
 ---
