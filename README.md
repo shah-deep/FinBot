@@ -23,6 +23,9 @@ This project is a multi-agent system designed to function as a Junior Investment
     - Simple moving averages (given window size or short and long windows)  
     - Exponential moving averages (given span)
 
+- **Company Info**:
+  Provides basic company info such as business summary.
+
 ---
 
 ### Setup and Running Instructions  
@@ -90,7 +93,8 @@ The multi-agent system is designed with the following components:
     - Acts as the central controller.  
     - Forwards user messages to the appropriate agent:  
         - **Fundamental Analysis Agent**  
-        - **Technical Analysis Agent**  
+        - **Technical Analysis Agent** 
+        - **Company Info Agent**  
 
 - **Fundamental Analysis Agent**:  
     - Handles requests for financial metrics such as ROE, ROA, Net Profit Margin, etc.  
@@ -101,6 +105,10 @@ The multi-agent system is designed with the following components:
     - Coordinates with:  
         - **Data Gathering Agent**: Fetches required data from financial data sources.  
         - **Plotting Agent**: Generates visualizations such as line graphs and moving average comparisons.  
+
+- **Company Info Agent**:   
+    - Provides basic company info such as company name and business summary. 
+
 
 #### Design Highlights  
 - **WebSocket Communication**: Ensures low-latency, real-time interactions between the front end and backend.  
