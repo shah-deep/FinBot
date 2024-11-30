@@ -28,11 +28,11 @@ class ConnectionHandler:
     def on_close(self, ws, close_status_code, close_msg):
         # print("Connection closed. Reconnecting...")
         # asyncio.run(self.connect_server(self.ticker))  
-        print("Connection Closed")
+        # print("Connection Closed")
+        pass
 
     def on_open(self, ws):
         # print("Connection established.")
-        # ws.send("Hello, server!")  # You can send an initial message if needed.
         pass
 
     def create_connection(self, ticker):

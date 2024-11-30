@@ -68,7 +68,7 @@ This project is a multi-agent system designed to function as a Junior Investment
 6. **Run the application**:  
     - Start the backend server:  
       ```bash  
-      uvicorn backend.server:app --reload --host 127.0.0.1 --port 8000
+      uvicorn backend.server:app --host 127.0.0.1 --port 8000
       ```  
     - Start the front end:  
       ```bash  
