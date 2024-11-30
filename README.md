@@ -24,7 +24,6 @@ This project is a multi-agent system designed to function as a Junior Investment
     - Exponential moving averages (given span)
 
 - **Company Info**:
-
       Provides basic company info such as business summary.
 
 
