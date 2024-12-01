@@ -1,7 +1,7 @@
 from .financialratios.finratioagent import create_finratios_agent
 from .pricetrends.pricesupervisor import PricesAgent
 
-import json
+import json, os
 import yfinance as yf
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.schema import BaseMessage
@@ -13,11 +13,16 @@ from langchain_cohere import ChatCohere
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
+from dotenv import load_dotenv
+
+load_dotenv(override=True) # override=True
 
 
 class SupervisorAgent:
 
     def __init__(self, company_ticker):   
+        cohere_api_key=os.getenv("COHERE_API_KEY")
+        # print(cohere_api_key)
         self.company_ticker = company_ticker.upper()
         self.tkr_msg = f"  Company Ticker is '{self.company_ticker}.'"
         self.ratios_agent = create_finratios_agent(verbose=False)
@@ -105,10 +110,9 @@ class SupervisorAgent:
         agent_name_var = "worker"
 
         agent_utilities = {
-            "ratios_agent": ("calculate company's financial metrics or financial ratios which include " 
+            "ratios_agent": ("getting performance, efficiency, and financial health of a company. It calculates company's financial metrics or financial ratios which include " 
                             "Profitability Metrics such as Return on Equity (ROE), Return on Assets (ROA), Net Profit Margin, Gross Margin, "
                             "and Leverage/Financial Stability Metrics such as Debt to Equity, Interest Coverage. "
-                            "These metrics are commonly used in analyzing the performance, efficiency, and financial health of a company."
                             ),
             "techplot_agent": ("perform stock trend analysis by comparing and plotting technical indicators such as moving averages. "
                             "Specifically, it can be used to compare or plot "

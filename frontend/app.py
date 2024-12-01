@@ -19,4 +19,4 @@ def handle_redirect():
 
 app = make_chat_app(server)
 
-server.run(host="127.0.0.1", port=8050, debug=False) 
+server.run(host="127.0.0.1", port=8050, debug=True) 

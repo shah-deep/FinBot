@@ -42,8 +42,9 @@ def create_finratios_agent(verbose=False):
                 1. Get CIK from ticker using get_cik_from_ticker tool.
                 2. Using CIK, check if company facts data is available with check_company_facts_data tool.
                 3. If it returns False, use refresh_company_facts_data to fetch company facts data.
-                3. Select appropriate tool for performing calculations.
-                4. Return the results as requested in the question.
+                4. Select appropriate tool for performing calculations. 
+                5. Only if specifically asked for the performance, efficiency, or financial health, provide short summary as per the request.
+                6. Return the results as requested in the question.
             """,
         ),
         ("human", "{input}"),
