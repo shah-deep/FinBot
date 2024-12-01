@@ -93,7 +93,7 @@ class SupervisorAgent:
         output = "This information is not available."
         if(isinstance(response, BaseMessage)):
             output = response.content
-            if(output.strip(" .").upper() == "ERROR"):
+            if(output.strip(" .'").strip('"').upper() == "ERROR"):
                 output = "Error"
 
         return {"messages": [
@@ -160,7 +160,7 @@ class SupervisorAgent:
         next_ = "supervisor"
         if(isinstance(response, BaseMessage)):
             next_ = response.content
-            next_ = next_.strip(" .").lower()
+            next_ = next_.strip(" .'").strip('"').lower()
             # print(f"Got Next: {next_}")
 
         # print("Response:  ", response)    
