@@ -131,7 +131,7 @@ The multi-agent system is designed with the following components:
 ---
 
 
-### Limitations
+### Limitations & Future Work
 
 1. At present, FinBot can only perform one of the capabilities at a time. To accumulate responses of multiple agents, we can use with_structured_output functionality of LangChain and return the responses of the agents back to the supervisor.
 
