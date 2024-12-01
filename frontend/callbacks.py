@@ -49,6 +49,10 @@ class CallbacksHandler:
             Input("store-conversation", "data")
         )
         def update_display(chat_history):
+            """
+            Update the displayed conversation history. 
+            Textbox are created alternatively for user message and AI message.
+            """
             return [
                 self.textbox(x, box="user") if i % 2 == 0 else self.textbox(x, box="AI")
                 for i, x in enumerate(chat_history.split("<split>")[:-1])
@@ -72,9 +76,7 @@ class CallbacksHandler:
             ticker = params.get('t', [''])[0]
             ticker = str(ticker).upper()
             try:
-                info = yf.Ticker(ticker).history(
-                            period='5d',
-                            interval='1d')
+                info = yf.Ticker(ticker).history(period='5d', interval='1d')
                 if(len(info) == 0):
                     return "/?res=Error"
             except:
@@ -130,7 +132,7 @@ class CallbacksHandler:
             if not server_response:
                 return chat_history, False
             
-            error_response = "Apologies, I am unable to fulfill this request. Please try again and restrict your questions to financial analysis."
+            error_response = "Apologies, I cannot fulfill this request. Please try again and focus your questions on financial analysis."
             
             try:
                 # server_response = ws_message

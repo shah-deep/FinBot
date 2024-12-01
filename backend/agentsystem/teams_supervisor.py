@@ -19,8 +19,16 @@ load_dotenv(override=True) # override=True
 
 
 class SupervisorAgent:
+    """
+    This class orchestrates tasks between different tool agents for managing company-related requests. 
+    It handles agents for financial ratios, price trends, and company information, delegating tasks based on user input.
+    """
 
-    def __init__(self, company_ticker):   
+    def __init__(self, company_ticker):  
+        """
+        Initialize the SupervisorAgent with a company ticker.
+        """
+
         cohere_api_key=os.getenv("COHERE_API_KEY")
         # print(cohere_api_key)
         self.company_ticker = company_ticker.upper()
@@ -50,6 +58,10 @@ class SupervisorAgent:
             
 
     def ratios_node(self, state: State) -> State:
+        """
+        Handles requests related to financial ratios.
+        """
+
         content = self.get_message_content(state)
         content += self.tkr_msg
         response = self.ratios_agent.invoke({"input": content})
@@ -63,6 +75,10 @@ class SupervisorAgent:
             ]}
 
     def techplot_node(self, state: State) -> State:
+        """
+        Handles requests related to stock price trend analysis.
+        """
+
         content = self.get_message_content(state)
         content += self.tkr_msg
         response = self.techplot_agent.invoke({"messages": HumanMessage(content=content), })
@@ -85,6 +101,10 @@ class SupervisorAgent:
     
     
     def compinfo_node(self, state: State) -> State:
+        """
+        Handles requests for general company information.
+        """
+
         content = self.get_message_content(state)
         messages = [SystemMessage(content=self.infoagent_prompt), HumanMessage(content=content)]
         response = self.llm.invoke(messages)
@@ -106,7 +126,6 @@ class SupervisorAgent:
 
 
     def init_constants(self):
-
         agent_name_var = "worker"
 
         agent_utilities = {
@@ -152,7 +171,9 @@ class SupervisorAgent:
        
 
     def supervisor_node(self, state: State) -> State:
-        # print("STATE Supervisor ", state)
+        """
+        Supervises and routes requests to the appropriate agent based on the current state.
+        """
 
         messages = [SystemMessage(content=self.system_prompt)] + state["messages"]
         response = self.llm.invoke(messages) # .with_structured_output(Router)
@@ -173,7 +194,7 @@ class SupervisorAgent:
         else:
             content_ = self.get_message_content(state)
 
-        print(f"Supervisor node, next: {next_}")#, content: {content_}")
+        print(f"Supervisor node, next: {next_}") #, content: {content_}")
 
         return {"messages": [
                 {
@@ -186,6 +207,10 @@ class SupervisorAgent:
 
 
     def route_tools(self, state: State):
+        """
+        Routes the task to the appropriate worker based on the last message.
+        """
+
         last_message = state["messages"][-1]
         # print(last_message)
         if(isinstance(last_message, BaseMessage) and ('next' in last_message.additional_kwargs)):
@@ -196,6 +221,10 @@ class SupervisorAgent:
         
 
     def supervisor_graph_builder(self) -> CompiledGraph:
+        """
+        Builds and compiles the state graph for orchestrating tasks between agents.
+        """
+
         builder = StateGraph(self.State)
         builder.add_edge(START, "supervisor")
         builder.add_node("supervisor", self.supervisor_node)

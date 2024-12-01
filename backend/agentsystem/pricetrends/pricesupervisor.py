@@ -8,6 +8,10 @@ from typing_extensions import TypedDict
 
 
 class PricesAgent:
+    """
+    The PricesAgent class orchestrates tasks between two tool agents: trends_agent and plot_agent.
+    It facilitates identifying trends and generating plots for stock or financial data based on user input.
+    """
 
     def __init__(self, verbose=False):
         self.trends_agent = create_trends_agent(verbose=verbose)
@@ -29,6 +33,9 @@ class PricesAgent:
             
 
     def trends_node(self, state: State) -> State:
+        """
+        Performs data gathering using the trends_agent.
+        """
         content = self.get_message_content(state)
         response = self.trends_agent.invoke({"input": content})
         return {"messages": 
@@ -40,6 +47,9 @@ class PricesAgent:
             }
 
     def plots_node(self, state: State) -> State:
+        """
+        Generate plots based on the analyzed trends using the plot_agent.
+        """
         content = self.get_message_content(state)
         if(content=="Error"):
             response = "Error"

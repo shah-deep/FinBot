@@ -4,10 +4,19 @@ from .teams_supervisor import SupervisorAgent
 
 
 class HelperAgent:
+    """
+    A wrapper agent for interacting with a task execution graph. It facilitates communication 
+    between the user and the agents within the graph.
+    """
+
     def __init__(self, graph):
         self.graph = graph
 
     def send_message(self, user_input: str):
+        """
+        Sends a user input message to the graph and processes the response.
+        """
+        
         try:
             response = self.graph.invoke({"messages": [HumanMessage(content=user_input)],})
             if (isinstance(response, dict) and ("messages" in response)):
