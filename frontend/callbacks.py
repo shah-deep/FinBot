@@ -135,8 +135,6 @@ class CallbacksHandler:
             error_response = "Apologies, I cannot fulfill this request. Please try again and focus your questions on financial analysis."
             
             try:
-                # server_response = ws_message
-
                 server_response = json.loads(server_response)
                 if(server_response["sender"] in ["ratios_agent", "techplot_agent", "compinfo_agent"]):
                     model_output = server_response["response"]
