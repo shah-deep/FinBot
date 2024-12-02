@@ -4,33 +4,12 @@ from .agentsystem.utils import create_agent, HelperAgent
 
 app = FastAPI()
 
-class ConnectionManager:
-    """
-    Manages WebSocket connections for handling real-time communication.
-    """
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_message(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
-
-manager = ConnectionManager()
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket, tkr: str = Query(None)):
     """
     WebSocket endpoint for managing client-agent communication.
     """
-    await manager.connect(websocket)
+    await websocket.accept()
     agent = create_agent(tkr)
     try:
         while True:
@@ -39,7 +18,7 @@ async def websocket_endpoint(websocket: WebSocket, tkr: str = Query(None)):
             await websocket.send_text(agent_response)
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        print("Connection closed.")
 
 
 async def agent_communication(user_input: str, agent: HelperAgent) -> str:   

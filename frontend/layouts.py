@@ -8,14 +8,20 @@ def create_app_layout():
         style={
             "overflowY": "auto",
             "display": "flex",
-            "height": "calc(90vh - 132px)",
+            "height": "calc(98vh - 45px)",
             "flexDirection": "column-reverse",
         },
     )
 
     controls = dbc.InputGroup(
         children=[
-            dbc.Input(id="user-input", placeholder="Request Financial Analysis... (Eg: Return on Equity, Return on Assets)", type="text", autocomplete="off", disabled=True),
+            dbc.Input(
+                id="user-input", 
+                placeholder="Request Financial Analysis... (Eg: Return on Equity, Return on Assets)", 
+                type="text", 
+                autocomplete="off", 
+                disabled=True
+            ),
             dbc.Button("Send", id="submit", color="secondary", disabled=True),
         ]
     )
@@ -32,6 +38,12 @@ def create_app_layout():
                 conversation,
                 controls,
             ],
+            style={
+                "height": "100vh",
+                "width": "98vw",
+                "position": "relative",
+                "max-width": "unset",
+            }
         )
 
     return html.Div(container)

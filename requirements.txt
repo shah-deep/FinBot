@@ -16,3 +16,4 @@ selenium==4.27.1
 typing_extensions==4.12.2
 websocket_client==1.8.0
 yfinance==0.2.50
+uvicorn==0.32.1

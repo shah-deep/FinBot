@@ -34,7 +34,7 @@ class CallbacksHandler:
             style["marginLeft"] = 0
             style["marginRight"] = "auto"
             if(chat_msg[-4:]==".png" or chat_msg[-4:]==".jpg"):
-                image_style = {"width": "100%", "height": "auto", "object-fit": "contain"}
+                image_style = {"width": "100%", "height": "auto", "object-fit": "contain", "max-width": "600px"}
                 curr_img_source = os.path.join(self.image_source_path, chat_msg)
                 chat_msg = html.Img(src=Image.open(curr_img_source), style=image_style)
 
