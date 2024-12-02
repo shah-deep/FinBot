@@ -37,14 +37,17 @@ class TestChatApp(unittest.TestCase):
         driver.get(f"{self.base_url}c/?t=NVDA")
 
         # Find the chat input box and enter a query
+        time.sleep(10) 
         chat_input = driver.find_element(By.ID, "user-input") 
         chat_input.send_keys("Get ROE")
         chat_input.send_keys(Keys.RETURN)
 
-        time.sleep(5)  
+        time.sleep(2)  
 
         chat_response = driver.find_element(By.CLASS_NAME, "card-body")  # Replace with actual response element class
-        self.assertTrue("ROE" in chat_response.text)
+        self.assertIn("ROE", chat_response.text)
+        # time.sleep(30)
+        # self.assertTrue("0." in chat_response.text)
 
 
 if __name__ == "__main__":
