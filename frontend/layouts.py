@@ -15,8 +15,8 @@ def create_app_layout():
 
     controls = dbc.InputGroup(
         children=[
-            dbc.Input(id="user-input", placeholder="Request Financial Analysis... (Eg: Return on Equity, Return on Assets)", type="text", autocomplete="off", disabled=False),
-            dbc.Button("Send", id="submit", color="secondary"),
+            dbc.Input(id="user-input", placeholder="Request Financial Analysis... (Eg: Return on Equity, Return on Assets)", type="text", autocomplete="off", disabled=True),
+            dbc.Button("Send", id="submit", color="secondary", disabled=True),
         ]
     )
 

@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import os
 import json
+import time
 from PIL import Image
 import urllib.parse
 from connection import ConnectionHandler
@@ -67,8 +68,11 @@ class CallbacksHandler:
         
 
         @self.app.callback(
-            Output("redirect_home", "href"),
-            Input('url', 'search')
+            [Output("redirect_home", "href"), 
+             Output("user-input", "disabled", allow_duplicate=True), 
+             Output("submit", "disabled", allow_duplicate=True)],
+            Input('url', 'search'),
+            prevent_initial_call='initial_duplicate'
         )
         def update_query_param(query_string):
             global conn
@@ -78,35 +82,38 @@ class CallbacksHandler:
             try:
                 info = yf.Ticker(ticker).history(period='5d', interval='1d')
                 if(len(info) == 0):
-                    return "/?res=Error"
+                    return "/?res=Error", True, True
             except:
                 # print("Got fin error")
-                return "/?res=Error"
+                return "/?res=Error", True, True
 
             self.ticker = ticker
             conn = ConnectionHandler()
             asyncio.run(conn.connect_server(ticker))
-            return None
+            while not conn.is_connected.is_set():
+                time.sleep(0.1)
+            return None, False, False
 
 
         # def register_socket_callbacks(app):
         @self.app.callback(
             [Output("userinput-holder", "children"), 
              Output("store-conversation", "data"), 
-             Output("user-input", "disabled", allow_duplicate=True)],
+             Output("user-input", "disabled", allow_duplicate=True), 
+             Output("submit", "disabled", allow_duplicate=True)],
             [Input("submit", "n_clicks"), Input("user-input", "n_submit")],
             [State("user-input", "value"), State("store-conversation", "data")],
             prevent_initial_call=True
         )
         def send_server_message(n_clicks, n_submit, user_input, chat_history):
             if n_clicks == 0 and n_submit is None:
-                return "", "", False
+                return "", "", False, False
 
             if user_input is None or user_input == "":
-                return "", chat_history, False
+                return "", chat_history, False, False
             
             chat_history += f"{user_input}<split>"
-            return user_input, chat_history, True
+            return user_input, chat_history, True, True
         
 
         @self.app.callback(
@@ -122,15 +129,17 @@ class CallbacksHandler:
         
 
         @self.app.callback(
-            [Output("store-conversation", "data", allow_duplicate=True), Output('user-input', 'disabled')],
-            Input('ws-msg-holder', 'children'),
+            [Output("store-conversation", "data", allow_duplicate=True), 
+             Output("user-input", "disabled"), 
+             Output("submit", "disabled")],
+            Input("ws-msg-holder", "children"),
             State("store-conversation", "data"),
             prevent_initial_call=True
         )
         def get_server_message(server_response, chat_history):
 
             if not server_response:
-                return chat_history, False
+                return chat_history, False, False
             
             error_response = "Apologies, I cannot fulfill this request. Please try again and focus your questions on financial analysis."
             
@@ -151,5 +160,5 @@ class CallbacksHandler:
 
             finally:
                 chat_history += f"{model_output}<split>"
-                return chat_history, False
+                return chat_history, False, False
     

@@ -8,6 +8,7 @@ class ConnectionHandler:
         self.curr_response = ''
         self.ws = None
         self.ticker = None
+        self.is_connected = threading.Event()
 
     def on_message(self, ws, message):
         self.curr_response = message
@@ -24,16 +25,16 @@ class ConnectionHandler:
 
     def on_error(self, ws, error):
         self.curr_response = "Error"
+        self.is_connected.clear()
 
     def on_close(self, ws, close_status_code, close_msg):
-        # print("Connection closed. Reconnecting...")
-        # asyncio.run(self.connect_server(self.ticker))  
         print("Connection Closed")
         self.curr_response = "Error"
+        self.is_connected.clear()
 
     def on_open(self, ws):
-        print("Connection established.")
-        # pass
+        self.is_connected.set()
+        # print("Connection established.")
 
     def create_connection(self, ticker):
         ws = websocket.WebSocketApp(
@@ -53,7 +54,7 @@ class ConnectionHandler:
             try:
                 self.ws.run_forever()
             except Exception as e:
-                print(f"Connection error occurred: {e}, retrying...")
+                print(f"Connection error occurred: {e}")
                 time.sleep(5)
 
         ws_thread = threading.Thread(target=run_ws)
