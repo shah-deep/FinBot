@@ -11,8 +11,10 @@
         <h1 class="mb-4">Hi, this is FinBot! 👋</h1>
 
         {% if show_alert %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Error:</strong> Please provide a valid company ticker.
+        <div class="d-flex justify-content-center">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error:</strong> Please provide a valid company ticker.
+            </div>
         </div>
         {% endif %}
 
@@ -24,6 +26,7 @@
                 placeholder="Enter company ticker..." 
                 required 
                 style="max-width: 300px;"
+                autocomplete="off"
             >
             <button type="submit" class="btn btn-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
