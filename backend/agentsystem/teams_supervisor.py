@@ -15,7 +15,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from dotenv import load_dotenv
 
-load_dotenv(override=True) # override=True
+load_dotenv(override=True)
 
 
 class SupervisorAgent:
@@ -28,7 +28,6 @@ class SupervisorAgent:
         """
         Initialize the SupervisorAgent with a company ticker.
         """
-
         cohere_api_key=os.getenv("COHERE_API_KEY")
         # print(cohere_api_key)
         self.company_ticker = company_ticker.upper()
