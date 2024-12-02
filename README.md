@@ -74,6 +74,10 @@ This project is a multi-agent system designed to function as a Junior Investment
       ```bash  
       python frontend/app.py  
       ```  
+    - Access the Webpage:
+      ```
+      http://127.0.0.1:8050/
+      ```
 
 ---
 
