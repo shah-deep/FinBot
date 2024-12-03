@@ -26,7 +26,7 @@ def get_file_path(ticker: str, trend: str, window: int = 0) -> str:
     trend = trend.lower().strip().replace(" ", "_")  # Replace spaces with underscores for file naming
 
     # Generate file path
-    if window:
+    if window and (("short" not in trend) and ("long" not in trend)):
         file_path = f"{ticker}_{trend}_{window}.csv"
     else:
         file_path = f"{ticker}_{trend}.csv"

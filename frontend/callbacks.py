@@ -23,6 +23,7 @@ class CallbacksHandler:
             "width": "max-content",
             "padding": "2px 6px",
             "marginBottom": 20,
+            "whiteSpace": "pre-line",
         }
 
         if box == "user":
