@@ -80,7 +80,7 @@ def get_closing_price(ticker: str) -> str:
 
 
 @tool
-def get_moving_average(ticker: str, window: int) -> str:
+def get_moving_average(ticker: str, window: int = 15) -> str:
     """
     Calculate the moving average of a stock's closing prices over a specified window and saves them to the server.
 
@@ -89,7 +89,7 @@ def get_moving_average(ticker: str, window: int) -> str:
 
     Args:
         ticker (str): The stock ticker symbol for which to calculate the moving average.
-        window (int): The size of the rolling window to compute the moving average.
+        window (int): The size (days) of the rolling window to compute the moving average. This is number of days. 
 
     Returns:
         str: A success message confirming the update.

@@ -64,7 +64,8 @@ def create_plots(file_paths: list) -> str:
             plt.plot(df['Date'], df['Values'], label=label)
 
         plt.xlabel('Time', fontsize=16)
-        plt.ylabel('Price Value', fontsize=16)
+        plt.ylabel('Stock Price', fontsize=16)
+        plt.grid(visible=True)
         plt.legend()
         plt.tight_layout()
 
