@@ -26,16 +26,21 @@ def create_app_layout():
         ]
     )
 
+    valueholders = html.Div(style={'display': 'none'}, 
+        children=[
+            html.Div(id="ws-msg-holder", style={'display': 'none'}, children=""),
+            html.Div(id="userinput-holder", style={'display': 'none'}, children=""),
+            html.Div(id="connection-id", style={'display': 'none'}, children="")
+        ]
+    )
+
     container = dbc.Container(
             id="main_container",
-            fluid=False,
             children=[
                 dcc.Location(id="redirect_home", refresh=True),
                 dcc.Location(id='url', refresh=False),
-                html.Div(id="ws-msg-holder", style={'display': 'none'}, children=""),
-                html.Div(id="userinput-holder", style={'display': 'none'}, children=""),
-                html.Div(id="connection-id", style={'display': 'none'}, children=""),
                 dcc.Store(id="store-conversation", data=""),
+                valueholders,
                 conversation,
                 controls,
             ],
