@@ -1,8 +1,6 @@
 import websocket
 import time
 import asyncio
-import json
-import uuid
 import threading
 
 class ConnectionHandler:
@@ -38,9 +36,9 @@ class ConnectionHandler:
         self.is_connected.set()
         # print("Connection established.")
 
-    def create_connection(self, ticker, cid):
+    def create_connection(self, ticker):
         ws = websocket.WebSocketApp(
-            f"ws://127.0.0.1:8000/ws/{cid}?tkr={ticker}",
+            f"ws://127.0.0.1:8000/ws?tkr={ticker}",
             on_message=self.on_message,
             on_error=self.on_error,
             on_close=self.on_close,
@@ -50,26 +48,21 @@ class ConnectionHandler:
 
     async def connect_server(self, ticker):
         self.ticker = ticker
-        self.conn_id = ticker + str(uuid.uuid4()).replace("-", "")
-        self.ws = self.create_connection(ticker, self.conn_id)
+        self.ws = self.create_connection(ticker)
 
         def run_ws():
             try:
                 self.ws.run_forever()
             except Exception as e:
                 print(f"Connection error occurred: {e}")
-                # time.sleep(5)
+                time.sleep(5)
 
         ws_thread = threading.Thread(target=run_ws)
         ws_thread.start()
 
 
-    def send_message(self, user_input: str):
+    def send_message(self, message):
         if self.ws and self.ws.sock and self.ws.sock.connected:
-            message = {
-                "client_id": self.conn_id,
-                "user_input": user_input,
-            }
-            self.ws.send(json.dumps(message))
+            self.ws.send(message)
 
         
