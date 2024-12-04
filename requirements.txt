@@ -1,11 +1,11 @@
 dash==2.18.2
 dash_bootstrap_components==1.6.0
-fastapi==0.115.5
+fastapi==0.115.6
 Flask==2.2.5
-langchain==0.3.8
+langchain==0.3.9
 langchain_cohere==0.3.3
 langchain_core==0.3.21
-langgraph==0.2.53
+langgraph==0.2.54
 matplotlib==3.8.0
 pandas==2.2.3
 Pillow==11.0.0
@@ -14,6 +14,6 @@ python-dotenv==1.0.1
 Requests==2.32.3
 selenium==4.27.1
 typing_extensions==4.12.2
+uvicorn==0.32.1
 websocket_client==1.8.0
 yfinance==0.2.50
-uvicorn==0.32.1

@@ -1,6 +1,5 @@
 import dash
 import dash_bootstrap_components as dbc
-from flask import request
 from layouts import create_app_layout
 from callbacks import CallbacksHandler
 

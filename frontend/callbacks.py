@@ -4,6 +4,7 @@ from dash.dependencies import Input, Output, State
 import os
 import json
 import time
+import uuid
 from PIL import Image
 import urllib.parse
 from connection import ConnectionHandler
@@ -15,7 +16,7 @@ class CallbacksHandler:
     def __init__(self, app):
         self.app = app
         self.image_source_path = os.path.join('./', 'data', 'img')
-        self.conn = None
+        self.connections = {}
 
     def textbox(self, chat_msg, box="AI"):
         style = {
@@ -71,7 +72,8 @@ class CallbacksHandler:
         @self.app.callback(
             [Output("redirect_home", "href"), 
              Output("user-input", "disabled", allow_duplicate=True), 
-             Output("submit", "disabled", allow_duplicate=True)],
+             Output("submit", "disabled", allow_duplicate=True),
+             Output("connection-id", "children")],
             Input('url', 'search'),
             prevent_initial_call='initial_duplicate'
         )
@@ -82,17 +84,24 @@ class CallbacksHandler:
             try:
                 info = yf.Ticker(ticker).history(period='5d', interval='1d')
                 if(len(info) == 0):
-                    return "/?res=Error", True, True
+                    return "/?res=Error", True, True, None
             except:
                 # print("Got fin error")
-                return "/?res=Error", True, True
+                return "/?res=Error", True, True, None
 
             self.ticker = ticker
-            self.conn = ConnectionHandler()
-            asyncio.run(self.conn.connect_server(ticker))
-            while not self.conn.is_connected.is_set():
+
+            client_id = str(uuid.uuid4())
+            self.connections[client_id] = ConnectionHandler(client_id)
+            conn_handler = self.connections[client_id]
+            asyncio.run(conn_handler.connect_server(ticker))
+            while not conn_handler.is_connected.is_set():
                 time.sleep(0.1)
-            return None, False, False
+            print("CONN MADE: ", conn_handler, conn_handler.ws)
+            # self.connections.append(conn_handler.ws)
+            print(self.connections)
+            # print([conn.sock.connected for conn in self.connections])
+            return None, False, False, client_id
 
 
         # def register_socket_callbacks(app):
@@ -119,11 +128,12 @@ class CallbacksHandler:
         @self.app.callback(
             Output("ws-msg-holder", "children"),
             Input("userinput-holder", "children"),
+            State("connection-id", "children"),
             prevent_initial_call=True
         )
-        def send_server_message(user_input):
-            self.conn.send_message(user_input)
-            response = self.conn.get_message()
+        def send_server_message(user_input, client_id):
+            self.connections[client_id].send_message(user_input)
+            response = self.connections[client_id].get_message()
             return response
         
 

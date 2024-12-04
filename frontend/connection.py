@@ -4,10 +4,11 @@ import asyncio
 import threading
 
 class ConnectionHandler:
-    def __init__(self):
+    def __init__(self, client_id: str):
         self.curr_response = ''
         self.ws = None
         self.ticker = None
+        self.client_id = client_id
         self.is_connected = threading.Event()
 
     def on_message(self, ws, message):

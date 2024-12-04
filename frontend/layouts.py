@@ -34,6 +34,7 @@ def create_app_layout():
                 dcc.Location(id='url', refresh=False),
                 html.Div(id="ws-msg-holder", style={'display': 'none'}, children=""),
                 html.Div(id="userinput-holder", style={'display': 'none'}, children=""),
+                html.Div(id="connection-id", style={'display': 'none'}, children=""),
                 dcc.Store(id="store-conversation", data=""),
                 conversation,
                 controls,
