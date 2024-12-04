@@ -76,7 +76,6 @@ class CallbacksHandler:
             prevent_initial_call='initial_duplicate'
         )
         def update_query_param(query_string):
-            global conn
             params = urllib.parse.parse_qs(query_string.lstrip('?'))
             ticker = params.get('t', [''])[0]
             ticker = str(ticker).upper()
@@ -89,9 +88,9 @@ class CallbacksHandler:
                 return "/?res=Error", True, True
 
             self.ticker = ticker
-            conn = ConnectionHandler()
-            asyncio.run(conn.connect_server(ticker))
-            while not conn.is_connected.is_set():
+            self.conn = ConnectionHandler()
+            asyncio.run(self.conn.connect_server(ticker))
+            while not self.conn.is_connected.is_set():
                 time.sleep(0.1)
             return None, False, False
 
@@ -123,9 +122,8 @@ class CallbacksHandler:
             prevent_initial_call=True
         )
         def send_server_message(user_input):
-            global conn
-            conn.send_message(user_input)
-            response = conn.get_message()
+            self.conn.send_message(user_input)
+            response = self.conn.get_message()
             return response
         
 
