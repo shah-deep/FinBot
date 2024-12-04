@@ -15,7 +15,7 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+load_dotenv() # override=True
 
 
 class SupervisorAgent:
@@ -69,7 +69,7 @@ class SupervisorAgent:
                 {
                     "sender": "ratios_agent",
                     "content": response["output"],
-                    "role": "human"
+                    "role": "ai"
                 }      
             ]}
 
@@ -94,7 +94,7 @@ class SupervisorAgent:
                 {
                     "sender": "techplot_agent",
                     "content": output,
-                    "role": "human"
+                    "role": "ai"
                 }      
             ]}
     
@@ -119,7 +119,7 @@ class SupervisorAgent:
                 {
                     "sender": "compinfo_agent",
                     "content": output,
-                    "role": "human"
+                    "role": "ai"
                 }      
             ]}
 
