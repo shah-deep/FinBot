@@ -97,10 +97,7 @@ class CallbacksHandler:
             asyncio.run(conn_handler.connect_server(ticker))
             while not conn_handler.is_connected.is_set():
                 time.sleep(0.1)
-            print("CONN MADE: ", conn_handler, conn_handler.ws)
-            # self.connections.append(conn_handler.ws)
-            print(self.connections)
-            # print([conn.sock.connected for conn in self.connections])
+
             return None, False, False, client_id
 
 
