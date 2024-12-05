@@ -1,5 +1,5 @@
-from .trends.trendsagent import create_trends_agent
-from .plots.plotsagent import create_plots_agent
+from backend.agentsystem.pricetrends.trends.trendsagent import create_trends_agent
+from backend.agentsystem.pricetrends.plots.plotsagent import create_plots_agent
 
 from langchain.schema import BaseMessage
 from langgraph.graph import StateGraph, START, END

@@ -1,5 +1,5 @@
-from .financialratios.finratioagent import create_finratios_agent
-from .pricetrends.pricesupervisor import PricesAgent
+from backend.agentsystem.financialratios.finratioagent import create_finratios_agent
+from backend.agentsystem.pricetrends.pricesupervisor import PricesAgent
 
 import json, os
 import yfinance as yf
@@ -7,15 +7,14 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain.schema import BaseMessage
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.graph import CompiledGraph
-from typing import Literal, Annotated
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, Literal, Annotated, List
 from langchain_cohere import ChatCohere
-
+from pydantic import BaseModel, Field
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from dotenv import load_dotenv
 
-load_dotenv() # override=True
+load_dotenv(override=True)
 
 
 class SupervisorAgent:
@@ -35,6 +34,8 @@ class SupervisorAgent:
         self.ratios_agent = create_finratios_agent(verbose=False)
         self.techplot_agent = PricesAgent().prices_graph_builder()
         self.llm = ChatCohere(model="command-r-plus", temperature=0)
+        self.structured_llm = self.llm.with_structured_output(self.AgentSelection)
+        self.agent_calls = None
 
         try:
             self.company_info = yf.Ticker(company_ticker).info
@@ -48,6 +49,12 @@ class SupervisorAgent:
         Response from tool agents are added to the State messages list as a dict(sender: , **kwargs)
         """
         messages: Annotated[list[dict], add_messages]
+
+    class AgentSelection(BaseModel):
+        next: List[Literal["ratios_agent", "techplot_agent", "compinfo_agent"]] = Field(
+            description="List of agents to call for this task"
+        )
+        prompt: List[str] = Field(description="List of tasks that these agents should perform")
 
     def get_message_content(self, state: State) -> str:
         if (isinstance(state, dict) and ("messages" in state)):
@@ -69,7 +76,8 @@ class SupervisorAgent:
                 {
                     "sender": "ratios_agent",
                     "content": response["output"],
-                    "role": "ai"
+                    "role": "tool",
+                    "tool_call_id": "random",
                 }      
             ]}
 
@@ -152,8 +160,10 @@ class SupervisorAgent:
             - compinfo_agent: {agent_utilities['compinfo_agent']}
             - finish: If none of the previous {agent_name_var}s can do this task.
 
-            Respond with one of the following options:
+            "next" is list from the following options:
             "ratios_agent" | "techplot_agent" | "compinfo_agent" | "finish"
+
+            "prompt": List of tasks these agents should perform. Based on user's request, create a new prompt for each "next". 
             """
         )
 
@@ -173,27 +183,44 @@ class SupervisorAgent:
         """
         Supervises and routes requests to the appropriate agent based on the current state.
         """
+        
+        last_sender = state["messages"][-1].additional_kwargs["sender"]
+        # print(f"Supervisor got message from {last_sender}")
+        
+        if(last_sender=="user"):
+            messages = [SystemMessage(content=self.system_prompt)] + state["messages"]
+            response = self.structured_llm.invoke(messages)
+            print(f"Supervisor Resonse: {response}")
 
-        messages = [SystemMessage(content=self.system_prompt)] + state["messages"]
-        response = self.llm.invoke(messages) # .with_structured_output(Router)
-        # content_ = state["messages"]
-        next_ = "supervisor"
-        if(isinstance(response, BaseMessage)):
-            next_ = response.content
-            next_ = next_.strip(" .'").strip('"').lower()
-            # print(f"Got Next: {next_}")
+            if(isinstance(response, self.AgentSelection)):
+                if(not (isinstance(response.next, list) and isinstance(response.prompt, list))):
+                    next_, content_ = END, response.content
+                else:
+                    self.agent_calls = list(zip(response.next, response.prompt))
+                    self.results = []
+            else:
+                next_ = END
+                self.results = "Error"
+            
+        else:  
+            self.results.append({
+                "sender": last_sender,
+                "content": self.get_message_content(state)
+            })
 
-        # print("Response:  ", response)    
-        if(next_ not in ["ratios_agent", "techplot_agent", "compinfo_agent", "finish"]):
-            print(f"ERROR: WRONG OUTPUT FROM SUPERVISOR -- {response}")
+        if(not self.agent_calls):
+            next_ = END
+            content_ = self.results
+            self.results = []
+            self.agent_calls = None
+        else:
+            next_, content_ = self.agent_calls.pop(0)
+            
 
         if(next_=="finish"):
             next_ = END
-            content_ = "Error"
-        else:
-            content_ = self.get_message_content(state)
 
-        print(f"Supervisor node, next: {next_}") #, content: {content_}")
+        # print(f"Supervisor node, next: {next_}") #, content: {content_}")
 
         return {"messages": [
                 {
@@ -232,9 +259,9 @@ class SupervisorAgent:
         builder.add_node("compinfo_agent", self.compinfo_node)
 
         # Agents will always respond to the supervisor
-        builder.add_edge("ratios_agent", END)
-        builder.add_edge("techplot_agent", END)
-        builder.add_edge("compinfo_agent", END)
+        builder.add_edge("ratios_agent", "supervisor")
+        builder.add_edge("techplot_agent", "supervisor")
+        builder.add_edge("compinfo_agent", "supervisor")
 
         builder.add_conditional_edges("supervisor", self.route_tools)
 

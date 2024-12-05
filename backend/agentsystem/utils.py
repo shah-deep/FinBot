@@ -1,6 +1,7 @@
 from langchain_core.messages import HumanMessage
 from langchain.schema import BaseMessage
 from .teams_supervisor import SupervisorAgent
+from cohere.errors.too_many_requests_error import TooManyRequestsError
 
 
 class HelperAgent:
@@ -18,32 +19,23 @@ class HelperAgent:
         """
         
         try:
-            response = self.graph.invoke({"messages": [HumanMessage(content=user_input)],})
+            response = self.graph.invoke({"messages": [{"sender": "user", "content": user_input, "role": "human"}]})
             if (isinstance(response, dict) and ("messages" in response)):
                 last_message = response["messages"][-1]
                 if(isinstance(last_message, BaseMessage)):
-                    output = {
-                        "sender": last_message.additional_kwargs["sender"],
-                        "response": last_message.content
-                    }
-                    return output
+                    return last_message.content
                 
-            if(isinstance(response, BaseMessage)):
-                output = {
-                    "sender": response.additional_kwargs["sender"],
-                    "response": response.content
-                }
-                return output
+            if(isinstance(response, BaseMessage)): 
+                return response.content
             
             raise ValueError(f"Incorrect format for agent response. Got response: {response}")
         
+        except TooManyRequestsError:
+            return "TooManyRequestsError"
+        
         except Exception as e:
             print(f"Error in processing: {e}")
-            output = {
-                "sender": "system",
-                "response": "Error"
-            }
-            return output
+            return "Error"
             
     def get_graph(self):
         return self.graph

@@ -2,6 +2,7 @@ from dash import html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
 import os
+import re
 import json
 import time
 import uuid
@@ -35,12 +36,20 @@ class CallbacksHandler:
         elif box == "AI":
             style["marginLeft"] = 0
             style["marginRight"] = "auto"
-            if(chat_msg[-4:]==".png" or chat_msg[-4:]==".jpg"):
-                image_style = {"width": "100%", "height": "auto", "object-fit": "contain", "max-width": "600px"}
-                curr_img_source = os.path.join(self.image_source_path, chat_msg)
-                chat_msg = html.Img(src=Image.open(curr_img_source), style=image_style)
+            message = chat_msg.split("<images>")
+            output = [message[0].strip()]
+            if(len(message)>1):
+                img_pattern = r'\b\w+\.(?:png|jpg)\b'
+                matches = re.findall(img_pattern, message[1])
+                if(output[0]):
+                    output.append("\n\nRequested Analysis: \n")
+                for pic in matches:
+                    image_style = {"width": "100%", "height": "auto", "object-fit": "contain", "max-width": "600px"}
+                    curr_img_source = os.path.join(self.image_source_path, pic)
+                    img_element = html.Img(src=Image.open(curr_img_source), style=image_style)
+                    output.append(img_element)
 
-            return dbc.Card(chat_msg, style=style, body=True, color="light", inverse=False)
+            return dbc.Card(output, style=style, body=True, color="light", inverse=False)
 
         else:
             raise ValueError("Incorrect option for textbox.")
@@ -144,21 +153,37 @@ class CallbacksHandler:
         )
         def get_server_message(server_response, chat_history):
 
-            if not server_response:
+            if not server_response: 
                 return chat_history, False, False
             
+            model_output = ""
             error_response = "Apologies, I cannot fulfill this request. Please try again and focus your questions on financial analysis."
-            
+
             try:
                 server_response = json.loads(server_response)
-                if(server_response["sender"] in ["ratios_agent", "techplot_agent", "compinfo_agent"]):
-                    model_output = server_response["response"]
+                print(server_response)
+                if(server_response=="Error"):
+                    model_output = error_response
 
+                elif(server_response=="TooManyRequestsError"):
+                    model_output = "API Error: Too Many Requests."
+
+                elif(isinstance(server_response, list)):
+                    plot_temp = []
+                    for res in server_response:
+                        if(res['sender'] in ["ratios_agent", "compinfo_agent"]):
+                            model_output += res['content'] + "\n\n"
+                        elif(res['sender'] == "techplot_agent"):
+                            plot_temp.append(res['content'])
+
+                    if(plot_temp):
+                        model_output += "<images>"
+                        model_output += " \n ".join(plot_temp)
+                    model_output = model_output.strip("\n")
+                            
                 else:
                     raise ValueError(f"Incorrect server sender. Got response: {server_response}")
                 
-                if(server_response["response"]=="Error"):
-                    model_output = error_response
 
             except Exception as e:
                 model_output = error_response

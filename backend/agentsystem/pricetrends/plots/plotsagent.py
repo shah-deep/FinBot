@@ -1,11 +1,11 @@
 import os
-from .plotstools import get_file_path, create_plots
+from backend.agentsystem.pricetrends.plots.plotstools import get_file_path, create_plots
 
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
 from langchain.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
-from typing import List
+from typing_extensions import List
 from dotenv import load_dotenv
 
 load_dotenv()
