@@ -172,7 +172,7 @@ class CallbacksHandler:
                     plot_temp = []
                     for res in server_response:
                         if(res['sender'] in ["ratios_agent", "compinfo_agent"]):
-                            model_output = res['content'] + "\n\n"
+                            model_output += res['content'] + "\n\n"
                         elif(res['sender'] == "techplot_agent"):
                             plot_temp.append(res['content'])
 
