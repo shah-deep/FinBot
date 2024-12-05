@@ -136,7 +136,4 @@ The multi-agent system is designed with the following components:
 
 
 ### Limitations & Future Work
-
-1. At present, FinBot can only perform one of the capabilities at a time. To accumulate responses of multiple agents, we can use *with_structured_output* functionality of LangChain and return the responses of the agents back to the supervisor.
-
-2. Technical analysis is performed only on most recent data. To get it for user specified dates, we need to further process the user input to obtain the specific date range.
+Technical analysis is performed only on most recent data. To get it for user specified dates, we need to further process the user input to obtain the specific date range.

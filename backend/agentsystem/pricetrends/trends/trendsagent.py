@@ -1,12 +1,10 @@
 import os
-from .trendstools import (refresh_stock_data, check_stock_data, 
+from backend.agentsystem.pricetrends.trends.trendstools import (refresh_stock_data, check_stock_data, 
                         get_closing_price, get_moving_average, get_exponential_moving_average, get_short_moving_average, get_long_moving_average)
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
 from langchain.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
-from typing import Dict
 
 load_dotenv()
 

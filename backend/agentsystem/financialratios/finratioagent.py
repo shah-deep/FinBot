@@ -1,5 +1,5 @@
 import os
-from .finratiotools import (get_cik_from_ticker, check_company_facts_data, refresh_company_facts_data, 
+from backend.agentsystem.financialratios.finratiotools import (get_cik_from_ticker, check_company_facts_data, refresh_company_facts_data, 
                            calculate_roe, calculate_roa, calculate_net_profit_margin, calculate_gross_margin, calculate_debt_equity, calculate_interest_coverage)
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_cohere import ChatCohere
