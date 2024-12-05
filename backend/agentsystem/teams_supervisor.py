@@ -75,8 +75,7 @@ class SupervisorAgent:
                 {
                     "sender": "ratios_agent",
                     "content": response["output"],
-                    "role": "tool",
-                    "tool_call_id": "random",
+                    "role": "ai",
                 }      
             ]}
 
