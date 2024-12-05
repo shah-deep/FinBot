@@ -2,6 +2,8 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
 
@@ -18,7 +20,7 @@ class TestChatApp(unittest.TestCase):
         # Close the browser after all tests
         cls.driver.quit()
 
-    def test_redirect_on_ticker_input(self):
+    def test_aredirect_on_ticker_input(self):
         driver = self.driver
         driver.get(self.base_url)
 
@@ -37,7 +39,7 @@ class TestChatApp(unittest.TestCase):
         driver.get(f"{self.base_url}c/?t=NVDA")
 
         # Find the chat input box and enter a query
-        time.sleep(10) 
+        WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.ID, "user-input")))
         chat_input = driver.find_element(By.ID, "user-input") 
         chat_input.send_keys("Get ROE")
         chat_input.send_keys(Keys.RETURN)

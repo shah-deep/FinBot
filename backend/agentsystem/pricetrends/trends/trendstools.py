@@ -180,7 +180,7 @@ def get_exponential_moving_average(ticker: str, span: int) -> str:
 
     Args:
         ticker (str): The stock ticker symbol for which to calculate the EMA.
-        span (int): The span parameter for the EMA, representing the smoothing factor.
+        span (int): The span parameter (days) for the EMA, representing the smoothing factor. This is number of days.
     
     Returns:
         str: A success message confirming the update.
