@@ -30,7 +30,8 @@ class HelperAgent:
             
             raise ValueError(f"Incorrect format for agent response. Got response: {response}")
         
-        except TooManyRequestsError:
+        except TooManyRequestsError as e:
+            print(f"API Error: {e}")
             return "TooManyRequestsError"
         
         except Exception as e:

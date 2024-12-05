@@ -163,7 +163,7 @@ class SupervisorAgent:
             "next" is list from the following options:
             "ratios_agent" | "techplot_agent" | "compinfo_agent" | "finish"
 
-            "prompt": List of tasks these agents should perform. Based on user's request, create a new prompt for each "next". 
+            "prompt": List of tasks these agents should perform. Based on user's request, create a new prompt for each "next" in the same order as {agent_name_var} in "next". 
             """
         )
 

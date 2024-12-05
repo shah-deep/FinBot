@@ -42,7 +42,7 @@ class CallbacksHandler:
                 img_pattern = r'\b\w+\.(?:png|jpg)\b'
                 matches = re.findall(img_pattern, message[1])
                 if(output[0]):
-                    output.append("\n\nRequested Analysis: \n")
+                    output.append("\n\n\n\nRequested Analysis: \n\n")
                 for pic in matches:
                     image_style = {"width": "100%", "height": "auto", "object-fit": "contain", "max-width": "600px"}
                     curr_img_source = os.path.join(self.image_source_path, pic)
