@@ -42,7 +42,7 @@ class PricesAgent:
                 {
                     "sender": "trends_agent",
                     "content": response["output"],
-                    "role": "human"
+                    "role": "ai"
                 }      
             }
 
@@ -60,7 +60,7 @@ class PricesAgent:
                 {
                     "sender": "plot_agent",
                     "content": response["output"],
-                    "role": "human"
+                    "role": "ai"
                 }      
             }
 
