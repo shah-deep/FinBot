@@ -3,7 +3,7 @@ from backend.agentsystem.pricetrends.pricesupervisor import PricesAgent
 
 import json, os
 import yfinance as yf
-from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage 
 from langchain.schema import BaseMessage
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.graph import CompiledGraph
@@ -88,7 +88,7 @@ class SupervisorAgent:
 
         content = self.get_message_content(state)
         content += self.tkr_msg
-        response = self.techplot_agent.invoke({"messages": HumanMessage(content=content), })
+        response = self.techplot_agent.invoke({"messages": AIMessage(content=content), })
         print("Techplot Node Response: ", response)
         
         if(isinstance(response, dict) and ("messages" in response)):
@@ -113,7 +113,7 @@ class SupervisorAgent:
         """
 
         content = self.get_message_content(state)
-        messages = [SystemMessage(content=self.infoagent_prompt), HumanMessage(content=content)]
+        messages = [SystemMessage(content=self.infoagent_prompt), AIMessage(content=content)]
         response = self.llm.invoke(messages)
         print("Company Info Node Response: ", response)
 
