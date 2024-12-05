@@ -15,8 +15,8 @@ def get_file_path(ticker: str, trend: str, window: int = 0) -> str:
 
     Args:
         ticker (str): The stock ticker symbol (e.g., "TSLA", "NVDA").
-        trend (str): The trend type (e.g., "closing price", "moving average", "long moving average").
-        window (int, optional): The window or span for moving averages.
+        trend (str): The trend type (full name only) (e.g., "closing price", "moving average", "long moving average", "exponential moving average").
+        window (int, optional): The window or span for moving averages. Only take integer part if given as days.
 
     Returns:
         str: The generated file path.

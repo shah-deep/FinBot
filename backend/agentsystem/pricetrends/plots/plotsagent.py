@@ -30,7 +30,7 @@ def create_plots_agent(verbose=False):
                 - create_plots: To generate and save plots based on the list received from combine_file_paths tool.
 
                 When answering:
-                1. Use `get_file_path` to generate file paths for requested tickers and trends.
+                1. Use `get_file_path` to generate file paths for requested tickers and trends. For trends, use full name only.
                 2. Combine the file paths into a list and pass this list of paths to `create_plots` tool.
                 3. Use `create_plots` to generate and save the plots.
                 4. Return the png file path received from create_plots tool. Only return this file path intact as it is without any changes or additional information.

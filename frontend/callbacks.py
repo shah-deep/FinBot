@@ -98,8 +98,6 @@ class CallbacksHandler:
                 # print("Got fin error")
                 return "/?res=Error", True, True, None
 
-            self.ticker = ticker
-
             client_id = str(uuid.uuid4())
             self.connections[client_id] = ConnectionHandler(client_id)
             conn_handler = self.connections[client_id]
@@ -174,7 +172,8 @@ class CallbacksHandler:
                         if(res['sender'] in ["ratios_agent", "compinfo_agent"]):
                             model_output += res['content'] + "\n\n"
                         elif(res['sender'] == "techplot_agent"):
-                            plot_temp.append(res['content'])
+                            if(res['content']!="Error"):
+                                plot_temp.append(res['content'])
 
                     if(plot_temp):
                         model_output += "<images>"
@@ -190,6 +189,8 @@ class CallbacksHandler:
                 print(f"Error retriving server response: {e}")
 
             finally:
+                if(not model_output):
+                    model_output = "Sorry, some error occurred. Please try again."
                 chat_history += f"{model_output}<split>"
                 return chat_history, False, False
     

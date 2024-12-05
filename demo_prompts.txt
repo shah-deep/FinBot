@@ -1,0 +1,8 @@
+NVDA
+
+How is company's financial health?
+
+Where is the company located?  Show analysis of the closing prices.
+
+Compare the short moving average and exponential MA for 5 days.
+
