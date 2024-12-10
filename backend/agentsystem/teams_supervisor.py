@@ -134,7 +134,7 @@ class SupervisorAgent:
         agent_name_var = "worker"
 
         agent_utilities = {
-            "ratios_agent": ("getting performance, efficiency, and financial health of a company. It calculates company's financial metrics or financial ratios which include " 
+            "ratios_agent": ("knowing performance, efficiency, and financial health of a company. It calculates company's financial metrics or financial ratios which include " 
                             "Profitability Metrics such as Return on Equity (ROE), Return on Assets (ROA), Net Profit Margin, Gross Margin, "
                             "and Leverage/Financial Stability Metrics such as Debt to Equity, Interest Coverage. "
                             ),

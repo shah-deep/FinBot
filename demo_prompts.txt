@@ -1,6 +1,6 @@
 NVDA
 
-How is company's financial health?
+How is its financial health?
 
 Where is the company located?  Show analysis of the closing prices.
 
